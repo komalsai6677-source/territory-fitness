@@ -50,6 +50,9 @@ export function HomeScreen() {
 
   const liveRace = races.find((race) => race.status === 'live') ?? races[0];
   const userTileTotal = (currentUser?.totalTiles ?? 124) + metrics.capturedTiles;
+  const strongestTile = visibleTiles
+    .filter((tile) => tile.owner === 'you')
+    .sort((left, right) => Number(right.effortKm ?? 0) - Number(left.effortKm ?? 0))[0];
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -143,6 +146,21 @@ export function HomeScreen() {
             </View>
           ))
         )}
+      </SectionCard>
+
+      <SectionCard title="Territory intelligence">
+        <View style={styles.intelGrid}>
+          <View style={styles.intelCard}>
+            <Text style={styles.intelLabel}>Strongest sector</Text>
+            <Text style={styles.intelValue}>{strongestTile?.zoneName ?? 'No owned sector yet'}</Text>
+            <Text style={styles.sectionSubtle}>{strongestTile ? `${strongestTile.effortKm?.toFixed(1)} km defended` : 'Start moving to create your first shield'}</Text>
+          </View>
+          <View style={styles.intelCard}>
+            <Text style={styles.intelLabel}>Attack window</Text>
+            <Text style={styles.intelValue}>{battlegroundTiles[0]?.zoneName ?? 'Awaiting rival move'}</Text>
+            <Text style={styles.sectionSubtle}>{battlegroundTiles[0] ? `Needs ${battlegroundTiles[0].effortKm?.toFixed(1)} km to flip` : 'No contested signal yet'}</Text>
+          </View>
+        </View>
       </SectionCard>
 
       <SectionCard title="Race lobby">

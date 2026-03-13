@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useAppState } from './context/AppContext';
 import { ActivityScreen } from './screens/ActivityScreen';
@@ -50,9 +50,13 @@ export function AppShell() {
           </Text>
         </View>
         <View style={styles.headerRight}>
-          <View style={[styles.avatarBubble, { backgroundColor: avatarColor }]}>
-            <Text style={styles.avatarBubbleText}>{currentUser?.name?.slice(0, 1) ?? 'Y'}</Text>
-          </View>
+          {currentUser?.photoUrl ? (
+            <Image source={{ uri: currentUser.photoUrl }} style={styles.avatarImage} />
+          ) : (
+            <View style={[styles.avatarBubble, { backgroundColor: avatarColor }]}>
+              <Text style={styles.avatarBubbleText}>{currentUser?.name?.slice(0, 1) ?? 'Y'}</Text>
+            </View>
+          )}
           <Text style={styles.headerName}>{currentUser?.name ?? 'Runner'}</Text>
           <Pressable onPress={() => void logout()} style={styles.logoutButton}>
             <Text style={styles.logoutText}>Exit</Text>
@@ -157,6 +161,11 @@ const styles = StyleSheet.create({
     color: '#fff7ed',
     fontSize: 18,
     fontWeight: '900',
+  },
+  avatarImage: {
+    borderRadius: 999,
+    height: 44,
+    width: 44,
   },
   headerName: {
     color: '#d8e4eb',

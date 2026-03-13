@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
 import { useAppState } from '../context/AppContext';
 import { SectionCard } from '../ui/cards';
@@ -19,12 +19,23 @@ export function SocialScreen() {
         </Text>
         {nearbyRunners.map((runner) => (
           <View key={runner.id} style={styles.nearbyCard}>
-            <View>
-              <Text style={styles.runnerName}>{runner.name}</Text>
-              <Text style={styles.runnerMeta}>{runner.status}</Text>
-              <Text style={styles.runnerMeta}>
-                {runner.distanceAwayKm.toFixed(1)} km away | {runner.sharedTiles} contested tiles nearby
-              </Text>
+            <View style={styles.runnerRow}>
+              {runner.id === 'u1' ? (
+                <Image source={{ uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=60' }} style={styles.nearbyPhoto} />
+              ) : runner.id === 'u2' ? (
+                <Image source={{ uri: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=60' }} style={styles.nearbyPhoto} />
+              ) : (
+                <View style={styles.avatar}>
+                  <Text style={styles.avatarText}>{runner.name.slice(0, 1)}</Text>
+                </View>
+              )}
+              <View>
+                <Text style={styles.runnerName}>{runner.name}</Text>
+                <Text style={styles.runnerMeta}>{runner.status}</Text>
+                <Text style={styles.runnerMeta}>
+                  {runner.distanceAwayKm.toFixed(1)} km away | {runner.sharedTiles} contested tiles nearby
+                </Text>
+              </View>
             </View>
             <View style={styles.followButton}>
               <Text style={styles.followButtonText}>Follow</Text>

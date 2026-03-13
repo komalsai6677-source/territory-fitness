@@ -294,6 +294,28 @@ export const screenStyles = StyleSheet.create({
     gap: 12,
     padding: 14,
   },
+  intelGrid: {
+    gap: 12,
+  },
+  intelCard: {
+    backgroundColor: '#11222d',
+    borderColor: '#1d3a49',
+    borderRadius: 18,
+    borderWidth: 1,
+    gap: 8,
+    padding: 16,
+  },
+  intelLabel: {
+    color: '#8da2b4',
+    fontSize: 12,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+  },
+  intelValue: {
+    color: '#f8fafc',
+    fontSize: 20,
+    fontWeight: '900',
+  },
   statusPill: {
     alignSelf: 'flex-start',
     backgroundColor: '#123341',
@@ -330,6 +352,11 @@ export const screenStyles = StyleSheet.create({
     color: '#fff7ed',
     fontSize: 28,
     fontWeight: '900',
+  },
+  profilePhoto: {
+    borderRadius: 999,
+    height: 68,
+    width: 68,
   },
   profileHandle: {
     color: '#f59e0b',
@@ -371,5 +398,10 @@ export const screenStyles = StyleSheet.create({
   mapSurfaceLarge: {
     flex: 1,
     minHeight: 420,
+  },
+  nearbyPhoto: {
+    borderRadius: 999,
+    height: 42,
+    width: 42,
   },
 });

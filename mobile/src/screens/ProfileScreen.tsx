@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
 import { useAppState } from '../context/AppContext';
 import { SectionCard } from '../ui/cards';
@@ -31,9 +31,13 @@ export function ProfileScreen() {
   return (
     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
       <View style={styles.profileBanner}>
-        <View style={[styles.profileAvatar, { backgroundColor: avatarColor }]}>
-          <Text style={styles.profileAvatarText}>{currentUser?.name?.slice(0, 1) ?? 'T'}</Text>
-        </View>
+        {currentUser?.photoUrl ? (
+          <Image source={{ uri: currentUser.photoUrl }} style={styles.profilePhoto} />
+        ) : (
+          <View style={[styles.profileAvatar, { backgroundColor: avatarColor }]}>
+            <Text style={styles.profileAvatarText}>{currentUser?.name?.slice(0, 1) ?? 'T'}</Text>
+          </View>
+        )}
         <View style={styles.profileBannerBody}>
           <Text style={styles.profileHandle}>@you</Text>
           <Text style={styles.profileName}>{currentUser?.name ?? 'Territory Runner'}</Text>
