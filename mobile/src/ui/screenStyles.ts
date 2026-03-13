@@ -159,7 +159,9 @@ export const screenStyles = StyleSheet.create({
     width: 48,
   },
   trainingHero: {
-    backgroundColor: '#12222f',
+    backgroundColor: '#102028',
+    borderColor: '#1b3b47',
+    borderWidth: 1,
     borderRadius: 24,
     padding: 22,
   },
@@ -211,7 +213,9 @@ export const screenStyles = StyleSheet.create({
   },
   nearbyCard: {
     alignItems: 'center',
-    backgroundColor: '#101f29',
+    backgroundColor: '#0f1b24',
+    borderColor: '#173443',
+    borderWidth: 1,
     borderRadius: 18,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -273,7 +277,9 @@ export const screenStyles = StyleSheet.create({
   },
   infoRow: {
     backgroundColor: '#101f29',
+    borderColor: '#163545',
     borderRadius: 16,
+    borderWidth: 1,
     padding: 14,
   },
   infoRowText: {
@@ -289,7 +295,9 @@ export const screenStyles = StyleSheet.create({
   focusTileCard: {
     alignItems: 'center',
     backgroundColor: '#101f29',
+    borderColor: '#173444',
     borderRadius: 16,
+    borderWidth: 1,
     flexDirection: 'row',
     gap: 12,
     padding: 14,
@@ -376,8 +384,8 @@ export const screenStyles = StyleSheet.create({
     marginTop: 10,
   },
   mapCard: {
-    backgroundColor: '#0d1720',
-    borderColor: '#1c2a36',
+    backgroundColor: '#09131a',
+    borderColor: '#17404a',
     borderRadius: 22,
     borderWidth: 1,
     minHeight: 280,
@@ -388,8 +396,8 @@ export const screenStyles = StyleSheet.create({
     minHeight: 280,
   },
   mapCardLarge: {
-    backgroundColor: '#0d1720',
-    borderColor: '#1c2a36',
+    backgroundColor: '#09131a',
+    borderColor: '#17404a',
     borderRadius: 22,
     borderWidth: 1,
     minHeight: 420,

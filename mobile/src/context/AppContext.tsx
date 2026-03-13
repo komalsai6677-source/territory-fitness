@@ -187,8 +187,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [currentUser?.name, metrics.capturedTiles, metrics.distanceKm, serverLeaderboard]);
 
   async function login(profile: LocalProfile) {
-    setAuthenticated(true);
     setLocalProfile(profile);
+    setCurrentUser(createLocalUser(profile));
+    setAuthenticated(true);
     await hydrateServerState(profile);
   }
 
@@ -208,6 +209,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setLocalProfile(null);
     setCurrentUser(null);
     setSessionActive(false);
+    setLocationError(null);
+    tokenRef.current = null;
+    remoteSessionIdRef.current = null;
   }
 
   async function startSession() {
@@ -390,6 +394,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setMapMode(persistedState.preferredMapMode ?? 'run');
         if (persistedState.profile) {
           setLocalProfile(persistedState.profile);
+          setCurrentUser(createLocalUser(persistedState.profile));
           setAuthenticated(true);
         }
       }
@@ -497,6 +502,32 @@ function applyProfileOverlay(user: CurrentUserSummary, profile: LocalProfile): C
   return {
     ...user,
     name: profile.name,
+    contact: profile.contact,
+    city: profile.city,
+    avatarKey: profile.avatarKey,
+    photoUrl: profile.photoUrl,
+  };
+}
+
+function createLocalUser(profile: LocalProfile): CurrentUserSummary {
+  return {
+    id: 'local-you',
+    email: profile.contact.includes('@') ? profile.contact : 'runner@territory.app',
+    name: profile.name,
+    bio: 'Local athlete profile',
+    status: 'Ready to capture',
+    vibe: 'Future runner',
+    totalTiles: 0,
+    totalDistanceKm: 0,
+    followers: 0,
+    following: 0,
+    points: 0,
+    badges: [],
+    stickers: [],
+    rewards: [],
+    wins: 0,
+    losses: 0,
+    streak: 0,
     contact: profile.contact,
     city: profile.city,
     avatarKey: profile.avatarKey,

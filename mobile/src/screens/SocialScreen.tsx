@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
 import { useAppState } from '../context/AppContext';
 import { SectionCard } from '../ui/cards';
@@ -20,15 +20,9 @@ export function SocialScreen() {
         {nearbyRunners.map((runner) => (
           <View key={runner.id} style={styles.nearbyCard}>
             <View style={styles.runnerRow}>
-              {runner.id === 'u1' ? (
-                <Image source={{ uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=60' }} style={styles.nearbyPhoto} />
-              ) : runner.id === 'u2' ? (
-                <Image source={{ uri: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=60' }} style={styles.nearbyPhoto} />
-              ) : (
-                <View style={styles.avatar}>
-                  <Text style={styles.avatarText}>{runner.name.slice(0, 1)}</Text>
-                </View>
-              )}
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>{runner.name.slice(0, 1)}</Text>
+              </View>
               <View>
                 <Text style={styles.runnerName}>{runner.name}</Text>
                 <Text style={styles.runnerMeta}>{runner.status}</Text>
@@ -52,6 +46,7 @@ export function SocialScreen() {
               <Text style={styles.runnerMeta}>
                 {race.distanceKm} km | {race.entrants} runners | {race.type}
               </Text>
+              <Text style={styles.runnerMeta}>{race.prize}</Text>
             </View>
             <View style={styles.followButton}>
               <Text style={styles.followButtonText}>Join</Text>
