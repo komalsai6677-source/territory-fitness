@@ -1,0 +1,380 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "email": "nina@example.com",
+      "passwordHash": "cd569a239032bb3acd814b58ae53af77:58d15ef8ee7957ff97234689302271e18dfe96d9603256da7b638f939fbe1e632493ac67ad4e9d5178745a1e947e51f3f29e33d32f055b68b70100f61f5e05ea",
+      "name": "Nina",
+      "bio": "Defending harbour tiles",
+      "status": "Defending harbour tiles",
+      "vibe": "Hill crusher",
+      "distanceAwayKm": 0.7,
+      "totalTiles": 182,
+      "baseTiles": 182,
+      "totalDistanceKm": 128,
+      "active": true,
+      "followers": [],
+      "following": [
+        "u2",
+        "u3"
+      ],
+      "groups": [
+        "g1"
+      ],
+      "badges": [
+        "Harbour Queen",
+        "Hill Crusher"
+      ],
+      "stickers": [
+        "Sunrise Streak"
+      ],
+      "points": 3120,
+      "lastSession": null
+    },
+    {
+      "id": "you",
+      "email": "you@example.com",
+      "passwordHash": "a23e66d3fc54cc8783f1fbd691137b17:e0d71aa1f7842bd88e6ba6ec9ec97618a11a367f3b4cd6c1b888dc655c7711ff668def5a41de38ac92e103469bf6cd97020ce20eae7525dc226c4214d7bcd7dc",
+      "name": "You",
+      "bio": "Looking for a new route",
+      "status": "Finished a run",
+      "vibe": "Territory runner",
+      "distanceAwayKm": 0,
+      "totalTiles": 125,
+      "baseTiles": 124,
+      "totalDistanceKm": 96.02,
+      "active": false,
+      "followers": [
+        "u2"
+      ],
+      "following": [
+        "u1"
+      ],
+      "groups": [
+        "g1",
+        "g3"
+      ],
+      "badges": [
+        "Coastal Streak"
+      ],
+      "stickers": [
+        "100 Tile Capture"
+      ],
+      "points": 2176,
+      "lastSession": {
+        "id": "session-1773412431215",
+        "status": "finished",
+        "distanceKm": 0,
+        "durationSeconds": 7,
+        "capturedTiles": 1,
+        "paceLabel": "--:--",
+        "routePoints": 2
+      }
+    },
+    {
+      "id": "u2",
+      "email": "omar@example.com",
+      "passwordHash": "1b7af2ef5e8d6e9a857ff18786cb01e2:cf96df6d0c22e4921af66997f2caf41c14c3cec9da4d41a4d09ab2836224c272647b3ebd0b441915baf7d9060cd7eb7f74ba7b85773abec0f484e98daa096e48",
+      "name": "Omar",
+      "bio": "Easy recovery run",
+      "status": "Easy recovery run",
+      "vibe": "Consistency monster",
+      "distanceAwayKm": 1.5,
+      "totalTiles": 112,
+      "baseTiles": 112,
+      "totalDistanceKm": 83,
+      "active": true,
+      "followers": [
+        "you"
+      ],
+      "following": [
+        "u1"
+      ],
+      "groups": [
+        "g2"
+      ],
+      "badges": [
+        "Consistency Monster"
+      ],
+      "stickers": [],
+      "points": 1880,
+      "lastSession": null
+    },
+    {
+      "id": "u3",
+      "email": "mia@example.com",
+      "passwordHash": "1b096afef70c509ab89a66ff70c84a92:120a847eb560d70a26feecd3baeb620c6dde1b6ee9db45f91acf4ad86e193864950e2ea349f95ddc26088fd7aef316defdd1a562478ffe33091a667cd656d4ce",
+      "name": "Mia",
+      "bio": "Capturing east blocks",
+      "status": "Capturing east blocks",
+      "vibe": "Tile hunter",
+      "distanceAwayKm": 1.1,
+      "totalTiles": 101,
+      "baseTiles": 101,
+      "totalDistanceKm": 75,
+      "active": true,
+      "followers": [],
+      "following": [
+        "you"
+      ],
+      "groups": [
+        "g3"
+      ],
+      "badges": [
+        "Sunset Chaser"
+      ],
+      "stickers": [
+        "Tile Hunter"
+      ],
+      "points": 1710,
+      "lastSession": null
+    },
+    {
+      "id": "u1773412381126",
+      "email": "runner@example.com",
+      "passwordHash": "f94989afe93c948994aa4af78da776fc:fb22b2e72e3ca9c0a6cf7c801daa3dd336fb7f7616cf97c040b6f4a98482ec72383db405f34739c2aa325a24e2064071e0c7ccf0fa1af485ebaf05814cd1f339",
+      "name": "Runner",
+      "bio": "New territory runner",
+      "status": "Joined the league",
+      "vibe": "New challenger",
+      "distanceAwayKm": 0,
+      "totalTiles": 0,
+      "baseTiles": 0,
+      "totalDistanceKm": 0,
+      "active": false,
+      "followers": [],
+      "following": [],
+      "groups": [],
+      "badges": [
+        "Starter Badge"
+      ],
+      "stickers": [
+        "First Steps"
+      ],
+      "points": 0,
+      "lastSession": null
+    }
+  ],
+  "groups": [
+    {
+      "id": "g1",
+      "name": "City Crushers",
+      "members": [
+        "you",
+        "u1"
+      ],
+      "description": "Competitive harbour runners"
+    },
+    {
+      "id": "g2",
+      "name": "Sunrise Tempo Crew",
+      "members": [
+        "u2"
+      ],
+      "description": "Early morning pace sessions"
+    },
+    {
+      "id": "g3",
+      "name": "Weekend Capture League",
+      "members": [
+        "you",
+        "u3"
+      ],
+      "description": "Saturday tile battles"
+    }
+  ],
+  "challenges": [
+    {
+      "id": "c1",
+      "title": "Daily Burst",
+      "period": "Daily",
+      "target": "Run 3 km",
+      "rewardPoints": 120,
+      "progress": 1.4,
+      "total": 3
+    },
+    {
+      "id": "c2",
+      "title": "Weekly Territory Push",
+      "period": "Weekly",
+      "target": "Capture 25 tiles",
+      "rewardPoints": 320,
+      "progress": 11,
+      "total": 25
+    },
+    {
+      "id": "c3",
+      "title": "Monthly Endurance",
+      "period": "Monthly",
+      "target": "Run 80 km",
+      "rewardPoints": 900,
+      "progress": 26,
+      "total": 80
+    }
+  ],
+  "territory": [
+    {
+      "id": "15781:60696",
+      "owner": "you",
+      "center": {
+        "latitude": 18.937799999999996,
+        "longitude": 72.8358
+      }
+    },
+    {
+      "id": "15781:60697",
+      "owner": "you",
+      "center": {
+        "latitude": 18.9378,
+        "longitude": 72.837
+      }
+    },
+    {
+      "id": "15782:60696",
+      "owner": "open",
+      "center": {
+        "latitude": 18.939,
+        "longitude": 72.8358
+      }
+    },
+    {
+      "id": "15782:60697",
+      "owner": "rival",
+      "center": {
+        "latitude": 18.939,
+        "longitude": 72.837
+      }
+    }
+  ],
+  "feed": [
+    {
+      "id": "feed-1",
+      "actor": "Nina",
+      "message": "just defended 3 harbour tiles"
+    },
+    {
+      "id": "feed-2",
+      "actor": "Mia",
+      "message": "started a sunset capture run"
+    },
+    {
+      "id": "feed-1773412381302",
+      "actor": "You",
+      "message": "finished a 0.01 km session and captured 1 tiles"
+    },
+    {
+      "id": "feed-1773412381371",
+      "actor": "You",
+      "message": "posted in City Crushers: Ready for tonight?"
+    },
+    {
+      "id": "feed-1773412404712",
+      "actor": "You",
+      "message": "finished a 0 km session and captured 1 tiles"
+    },
+    {
+      "id": "feed-1773412431295",
+      "actor": "You",
+      "message": "finished a 0 km session and captured 1 tiles"
+    }
+  ],
+  "chatMessages": [
+    {
+      "id": "m1",
+      "groupId": "g1",
+      "authorId": "u1",
+      "authorName": "Nina",
+      "text": "Harbour push at 6 PM?",
+      "createdAt": "2026-03-13T14:33:00.827Z"
+    },
+    {
+      "id": "m2",
+      "groupId": "g3",
+      "authorId": "u3",
+      "authorName": "Mia",
+      "text": "Weekend route looks open on the east side.",
+      "createdAt": "2026-03-13T14:33:00.829Z"
+    },
+    {
+      "id": "m-1773412381371",
+      "groupId": "g1",
+      "authorId": "you",
+      "authorName": "You",
+      "text": "Ready for tonight?",
+      "createdAt": "2026-03-13T14:33:01.371Z"
+    }
+  ],
+  "sessions": [
+    {
+      "id": "session-1773412381282",
+      "userId": "you",
+      "startedAt": 1773412381282,
+      "lastTimestamp": 1773412388286,
+      "lastLocation": {
+        "latitude": 18.93825,
+        "longitude": 72.83555
+      },
+      "route": [
+        {
+          "latitude": 18.9382,
+          "longitude": 72.8355
+        },
+        {
+          "latitude": 18.93825,
+          "longitude": 72.83555
+        }
+      ],
+      "capturedTileIds": [
+        "15781:60696"
+      ],
+      "distanceMeters": 7.6528211895862235,
+      "status": "finished"
+    },
+    {
+      "id": "session-1773412404285",
+      "userId": "you",
+      "startedAt": 1773412404285,
+      "lastTimestamp": 1773412404285,
+      "lastLocation": {
+        "latitude": 18.9382,
+        "longitude": 72.8355
+      },
+      "route": [
+        {
+          "latitude": 18.9382,
+          "longitude": 72.8355
+        }
+      ],
+      "capturedTileIds": [
+        "15781:60696"
+      ],
+      "distanceMeters": 0,
+      "status": "finished"
+    },
+    {
+      "id": "session-1773412431215",
+      "userId": "you",
+      "startedAt": 1773412431215,
+      "lastTimestamp": 1773412438221,
+      "lastLocation": {
+        "latitude": 18.93821,
+        "longitude": 72.83551
+      },
+      "route": [
+        {
+          "latitude": 18.9382,
+          "longitude": 72.8355
+        },
+        {
+          "latitude": 18.93821,
+          "longitude": 72.83551
+        }
+      ],
+      "capturedTileIds": [
+        "15781:60696"
+      ],
+      "distanceMeters": 1.5305643249160668,
+      "status": "finished"
+    }
+  ]
+}
