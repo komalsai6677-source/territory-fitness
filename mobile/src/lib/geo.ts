@@ -1,4 +1,4 @@
-import { TerritoryTile } from '../types';
+import { TerritoryMode, TerritoryTile } from '../types';
 
 const EARTH_RADIUS_METERS = 6371000;
 export const TILE_SIZE_DEGREES = 0.0012;
@@ -75,14 +75,15 @@ export function getTileIdFromRegion(region: {
   return getTileId(region.latitude, region.longitude);
 }
 
-export function mergeTiles(existingTiles: TerritoryTile[], capturedTileIds: string[]) {
-  const tileMap = new Map(existingTiles.map((tile) => [tile.id, tile]));
+export function mergeTiles(existingTiles: TerritoryTile[], capturedTileIds: string[], mode: TerritoryMode) {
+  const tileMap = new Map(existingTiles.map((tile) => [`${tile.mode ?? 'run'}:${tile.id}`, tile]));
 
   capturedTileIds.forEach((tileId) => {
-    tileMap.set(tileId, {
+    tileMap.set(`${mode}:${tileId}`, {
       id: tileId,
       center: getTileCenterFromId(tileId),
       owner: 'you',
+      mode,
     });
   });
 

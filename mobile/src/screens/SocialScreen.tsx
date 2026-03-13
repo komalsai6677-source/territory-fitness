@@ -6,7 +6,7 @@ import { SectionCard } from '../ui/cards';
 import { screenStyles as styles } from '../ui/screenStyles';
 
 export function SocialScreen() {
-  const { chatMessages, groups, metrics, nearbyRunners, sendGroupMessage, sessionActive } = useAppState();
+  const { chatMessages, groups, metrics, nearbyRunners, races, sendGroupMessage, sessionActive } = useAppState();
   const [draftMessage, setDraftMessage] = useState('');
   const primaryGroupId = groups[0]?.id;
   const groupMessages = primaryGroupId ? chatMessages.filter((message) => message.groupId === primaryGroupId) : [];
@@ -28,6 +28,22 @@ export function SocialScreen() {
             </View>
             <View style={styles.followButton}>
               <Text style={styles.followButtonText}>Follow</Text>
+            </View>
+          </View>
+        ))}
+      </SectionCard>
+
+      <SectionCard title="Race invites">
+        {races.slice(0, 3).map((race) => (
+          <View key={race.id} style={styles.nearbyCard}>
+            <View>
+              <Text style={styles.runnerName}>{race.title}</Text>
+              <Text style={styles.runnerMeta}>
+                {race.distanceKm} km | {race.entrants} runners | {race.type}
+              </Text>
+            </View>
+            <View style={styles.followButton}>
+              <Text style={styles.followButtonText}>Join</Text>
             </View>
           </View>
         ))}

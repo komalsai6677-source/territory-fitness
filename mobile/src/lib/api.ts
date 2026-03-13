@@ -1,3 +1,5 @@
+import { TerritoryMode } from '../types';
+
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://territory-fitness-api-2.onrender.com';
 
 type Coordinates = {
@@ -54,6 +56,10 @@ export async function fetchBootstrap(token: string) {
       wins: number;
       losses: number;
       streak: number;
+      contact?: string;
+      city?: string;
+      avatarKey?: string;
+      photoUrl?: string;
     };
     nearby: Array<{
       id: string;
@@ -120,6 +126,7 @@ export async function fetchBootstrap(token: string) {
       effortKm?: number;
       contested?: boolean;
       zoneName?: string;
+      mode?: 'walk' | 'run' | 'bike';
     }>;
   };
 }
@@ -148,14 +155,14 @@ export async function sendChatMessage(token: string, groupId: string, text: stri
   };
 }
 
-export async function startRemoteSession(token: string, location: Coordinates) {
+export async function startRemoteSession(token: string, location: Coordinates, mode: TerritoryMode) {
   const response = await fetch(`${API_BASE_URL}/sessions/start`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ location }),
+    body: JSON.stringify({ location, mode }),
   });
 
   if (!response.ok) {

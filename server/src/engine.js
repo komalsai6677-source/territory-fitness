@@ -51,6 +51,9 @@ export async function createEngine() {
         wins: 0,
         losses: 0,
         streak: 0,
+        contact: payload.contact?.trim() || '',
+        city: payload.city?.trim() || 'Mumbai',
+        avatarKey: payload.avatarKey || 'ember',
         lastSession: null,
       };
 
@@ -90,7 +93,7 @@ export async function createEngine() {
         target: sanitizeUser(target),
       };
     },
-    async startSession(userId = 'you', location) {
+    async startSession(userId = 'you', location, mode = 'run') {
       const sessionId = `session-${Date.now()}`;
       const tileId = getTileId(location.latitude, location.longitude);
       const timestamp = Date.now();
@@ -105,10 +108,11 @@ export async function createEngine() {
         tileEfforts: { [tileId]: 0.05 },
         distanceMeters: 0,
         status: 'active',
+        mode,
       };
 
       sessions.set(sessionId, session);
-      upsertTerritoryTile(database.territory, tileId, userId, 0.05, database.users);
+      upsertTerritoryTile(database.territory, tileId, userId, 0.05, database.users, mode);
       applyUserProgress(database.users, userId, { active: true, status: 'Session live' });
       await persist(database, sessions);
 
@@ -142,7 +146,7 @@ export async function createEngine() {
       if (!session.capturedTileIds.includes(tileId)) {
         session.capturedTileIds.push(tileId);
       }
-      upsertTerritoryTile(database.territory, tileId, session.userId, session.tileEfforts[tileId], database.users);
+      upsertTerritoryTile(database.territory, tileId, session.userId, session.tileEfforts[tileId], database.users, session.mode);
 
       applyUserProgress(database.users, session.userId, {
         active: true,
@@ -175,8 +179,8 @@ export async function createEngine() {
       database.feed.push({
         id: `feed-${Date.now()}`,
         actor: requireUser(database, session.userId).name,
-        message: `finished a ${formatKilometers(session.distanceMeters)} km session and captured ${session.capturedTileIds.length} tiles`,
-      });
+          message: `finished a ${formatKilometers(session.distanceMeters)} km ${session.mode} session and captured ${session.capturedTileIds.length} tiles`,
+        });
 
       await persist(database, sessions);
       return { data: summary, status: 200 };
@@ -278,8 +282,8 @@ function summarizeSession(session) {
   };
 }
 
-function upsertTerritoryTile(territory, tileId, userId, effortKm, users) {
-  const tile = territory.find((entry) => entry.id === tileId);
+function upsertTerritoryTile(territory, tileId, userId, effortKm, users, mode) {
+  const tile = territory.find((entry) => entry.id === tileId && (entry.mode ?? 'run') === mode);
   const normalizedOwner = userId === 'you' ? 'you' : userId;
   const nextEffort = Number(Math.max(effortKm ?? 0.05, 0.05).toFixed(2));
 
@@ -291,6 +295,7 @@ function upsertTerritoryTile(territory, tileId, userId, effortKm, users) {
       effortKm: nextEffort,
       contested: false,
       zoneName: `Sector ${tileId.replace(':', '-')}`,
+      mode,
     });
     return;
   }
@@ -414,6 +419,10 @@ function sanitizeUser(user) {
       wins: user.wins ?? 0,
       losses: user.losses ?? 0,
       streak: user.streak ?? 0,
+      contact: user.contact,
+      city: user.city,
+      avatarKey: user.avatarKey,
+      photoUrl: user.photoUrl,
       rewards: [...user.badges, ...user.stickers],
       lastSession: user.lastSession,
     };

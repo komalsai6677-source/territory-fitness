@@ -3,7 +3,7 @@
     {
       "id": "u1",
       "email": "nina@example.com",
-      "passwordHash": "1ebe45b59ce46d99da03adf17dc9d1df:2a9108ac63007c7c4a9b7f0446bccfc4cc912f9e36d1edde47d00ba2951a7c2a1ab5f550e8a515e9cf29d944a7401dd90f0e1276063d0b6f73a320c58e58e9d6",
+      "passwordHash": "948ac1bda2a08236ea9bcce36022d7a3:160de8a4cce8547b1373f468314563de14ca1251015acd4bf25baa132f167dc2123c35610525e2f976c51f3efb21e099fc58c8b0111e2b3b62de760a3ad11ed2",
       "name": "Nina",
       "bio": "Defending harbour tiles",
       "status": "Defending harbour tiles",
@@ -32,12 +32,15 @@
       "wins": 18,
       "losses": 6,
       "streak": 4,
+      "contact": "+91 90000 10001",
+      "city": "Mumbai",
+      "avatarKey": "storm",
       "lastSession": null
     },
     {
       "id": "you",
       "email": "you@example.com",
-      "passwordHash": "3e3eb7abfc7044fadd91b3f5831a6406:d6a09dac7d032fcd0f0598e0b1ea00b65746598ebe066745f876190c9ab9fcb245783d9644f7bc3c4e298fc0f7779ddf17473f653afe8ac42cdda838a031ea2b",
+      "passwordHash": "bf409a06a122714ea7bd6ec651c641e5:07e095ae791f309a244702c4a73697d7625d69a7354391fad98f4bea32fd26a98bf460bb02311fa1c370567a14ed2fd6db8bdbae51c7a435b755b8a223b46054",
       "name": "You",
       "bio": "Looking for a new route",
       "status": "Finished a run",
@@ -67,8 +70,11 @@
       "wins": 11,
       "losses": 9,
       "streak": 0,
+      "contact": "+91 90000 10002",
+      "city": "Mumbai",
+      "avatarKey": "ember",
       "lastSession": {
-        "id": "session-1773420871678",
+        "id": "session-1773422835351",
         "status": "finished",
         "distanceKm": 0.01,
         "durationSeconds": 7,
@@ -80,7 +86,7 @@
     {
       "id": "u2",
       "email": "omar@example.com",
-      "passwordHash": "cfe8f3030e1c453fceff875d004be51b:0c5d3d8f823ed2b7df3e9c8eabf4c172818988295b8f696405e2dff48e301be5eb8276e6f6d8681381d0143d01929674b58c672af57f3691d0baa5b734542223",
+      "passwordHash": "cf821a2e8e41598c5ca610b2b0a56191:f563e7d8ec35bf22aa3490154847e7b2fcace3225f93b04c1843b2367017f3026c0d893d4dd775ae37162a28724735146895978c85b90384ad8876ee799a89e3",
       "name": "Omar",
       "bio": "Easy recovery run",
       "status": "Easy recovery run",
@@ -107,12 +113,15 @@
       "wins": 9,
       "losses": 7,
       "streak": 1,
+      "contact": "+91 90000 10003",
+      "city": "Mumbai",
+      "avatarKey": "ocean",
       "lastSession": null
     },
     {
       "id": "u3",
       "email": "mia@example.com",
-      "passwordHash": "48f04d79f90c50bccc7e91c25fbe904c:5dbe5b36508f2a2493b4e3d634c6cf4b33891e15811c5b458c93faa950f7ab81c9c15a39712038da693afc84c3ddc34dfa96048dce576f21e7ff27cf00cb1576",
+      "passwordHash": "35ff534d02baf986c6929898ee8c4140:1bf95f78823bb666e95bb5b31533a1a48b57410d37750fd823a641da4164260a1d1e9547cc2e2d67755ac88fcd2ab71ef658c17248c3fe2fa084c60e76346533",
       "name": "Mia",
       "bio": "Capturing east blocks",
       "status": "Capturing east blocks",
@@ -139,12 +148,15 @@
       "wins": 7,
       "losses": 5,
       "streak": 2,
+      "contact": "+91 90000 10004",
+      "city": "Mumbai",
+      "avatarKey": "neon",
       "lastSession": null
     },
     {
-      "id": "u1773420871575",
+      "id": "u1773422835189",
       "email": "runner@example.com",
-      "passwordHash": "e060ad8acec19149d8cc276f6b5da110:7b47cbec7af30db147e69f8bfd544525487ccd7b5caf3b38800b1eef3b803c74ffcc0ade107958532935afa8abc4600fa7c1b2bb7efb318755e23d31358110c3",
+      "passwordHash": "b386c59c368ddf80251aedce95d8e399:8e5c513acaffab2eaf98de0c8938771a5fed0df00b2abd001e3f2c003b60056594b3a5984bd8d508e4ba93ca1ae85317e7c9d1722433c1fc5bbcccb195603207",
       "name": "Runner",
       "bio": "New territory runner",
       "status": "Joined the league",
@@ -167,6 +179,9 @@
       "wins": 0,
       "losses": 0,
       "streak": 0,
+      "contact": "",
+      "city": "Mumbai",
+      "avatarKey": "ember",
       "lastSession": null
     }
   ],
@@ -237,7 +252,8 @@
       },
       "effortKm": 5.4,
       "contested": false,
-      "zoneName": "Harbour Edge"
+      "zoneName": "Harbour Edge",
+      "mode": "run"
     },
     {
       "id": "15781:60697",
@@ -248,7 +264,8 @@
       },
       "effortKm": 3.1,
       "contested": false,
-      "zoneName": "Fort Circuit"
+      "zoneName": "Fort Circuit",
+      "mode": "bike"
     },
     {
       "id": "15782:60696",
@@ -259,7 +276,8 @@
       },
       "effortKm": 0,
       "contested": false,
-      "zoneName": "Clock Tower Lane"
+      "zoneName": "Clock Tower Lane",
+      "mode": "run"
     },
     {
       "id": "15782:60697",
@@ -270,7 +288,20 @@
       },
       "effortKm": 6.2,
       "contested": true,
-      "zoneName": "Marine Sprint Gate"
+      "zoneName": "Marine Sprint Gate",
+      "mode": "run"
+    },
+    {
+      "id": "15783:60697",
+      "owner": "u2",
+      "center": {
+        "latitude": 18.9402,
+        "longitude": 72.837
+      },
+      "effortKm": 8.4,
+      "contested": false,
+      "zoneName": "Flyover Wheel Line",
+      "mode": "bike"
     }
   ],
   "races": [
@@ -280,7 +311,7 @@
       "type": "global",
       "distanceKm": 5,
       "status": "countdown",
-      "startsAt": "2026-03-13T17:39:31.372Z",
+      "startsAt": "2026-03-13T18:12:14.910Z",
       "entrants": 26,
       "prize": "450 XP + Harbour Crest",
       "city": "Mumbai"
@@ -291,7 +322,7 @@
       "type": "friends",
       "distanceKm": 1,
       "status": "live",
-      "startsAt": "2026-03-13T16:54:31.374Z",
+      "startsAt": "2026-03-13T17:27:14.912Z",
       "entrants": 2,
       "prize": "Control of 4 coastal tiles",
       "city": "Mumbai"
@@ -302,7 +333,7 @@
       "type": "tile-rush",
       "distanceKm": 3,
       "status": "countdown",
-      "startsAt": "2026-03-13T18:54:31.374Z",
+      "startsAt": "2026-03-13T19:27:14.912Z",
       "entrants": 14,
       "prize": "District bonus points",
       "city": "Mumbai"
@@ -320,12 +351,12 @@
       "message": "started a sunset capture run"
     },
     {
-      "id": "feed-1773420871692",
+      "id": "feed-1773422835381",
       "actor": "You",
-      "message": "finished a 0.01 km session and captured 1 tiles"
+      "message": "finished a 0.01 km run session and captured 1 tiles"
     },
     {
-      "id": "feed-1773420871754",
+      "id": "feed-1773422835448",
       "actor": "You",
       "message": "posted in City Crushers: Ready for tonight?"
     }
@@ -337,7 +368,7 @@
       "authorId": "u1",
       "authorName": "Nina",
       "text": "Harbour push at 6 PM?",
-      "createdAt": "2026-03-13T16:54:31.374Z"
+      "createdAt": "2026-03-13T17:27:14.912Z"
     },
     {
       "id": "m2",
@@ -345,23 +376,23 @@
       "authorId": "u3",
       "authorName": "Mia",
       "text": "Weekend route looks open on the east side.",
-      "createdAt": "2026-03-13T16:54:31.374Z"
+      "createdAt": "2026-03-13T17:27:14.912Z"
     },
     {
-      "id": "m-1773420871754",
+      "id": "m-1773422835448",
       "groupId": "g1",
       "authorId": "you",
       "authorName": "You",
       "text": "Ready for tonight?",
-      "createdAt": "2026-03-13T16:54:31.754Z"
+      "createdAt": "2026-03-13T17:27:15.448Z"
     }
   ],
   "sessions": [
     {
-      "id": "session-1773420871678",
+      "id": "session-1773422835351",
       "userId": "you",
-      "startedAt": 1773420871678,
-      "lastTimestamp": 1773420878680,
+      "startedAt": 1773422835351,
+      "lastTimestamp": 1773422842367,
       "lastLocation": {
         "latitude": 18.93825,
         "longitude": 72.83555
@@ -383,7 +414,8 @@
         "15781:60696": 0.06
       },
       "distanceMeters": 7.6528211895862235,
-      "status": "finished"
+      "status": "finished",
+      "mode": "run"
     }
   ]
 }

@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import MapView, { Marker, Polygon, Polyline } from 'react-native-maps';
 
 import { useAppState } from '../context/AppContext';
@@ -7,7 +7,7 @@ import { LegendDot, SectionCard } from '../ui/cards';
 import { screenStyles as styles } from '../ui/screenStyles';
 
 export function MapScreen() {
-  const { currentLocation, metrics, nearbyRunners, routePoints, territoryTiles } = useAppState();
+  const { currentLocation, mapMode, metrics, nearbyRunners, routePoints, setMapMode, territoryTiles } = useAppState();
 
   const liveRegion = currentLocation
     ? {
@@ -23,19 +23,31 @@ export function MapScreen() {
         longitudeDelta: 0.012,
       };
 
-  const contestedTiles = territoryTiles.filter((tile) => tile.contested);
+  const visibleTiles = territoryTiles.filter((tile) => (tile.mode ?? 'run') === mapMode);
+  const contestedTiles = visibleTiles.filter((tile) => tile.contested);
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
       <SectionCard title="Territory map">
+        <View style={styles.segmentedRow}>
+          {(['run', 'bike'] as const).map((mode) => {
+            const active = mapMode === mode;
+
+            return (
+              <Pressable key={mode} onPress={() => setMapMode(mode)} style={[styles.segmentedButton, active && styles.segmentedButtonActive]}>
+                <Text style={[styles.segmentedButtonText, active && styles.segmentedButtonTextActive]}>{mode} territory</Text>
+              </Pressable>
+            );
+          })}
+        </View>
         <Text style={styles.sectionText}>
-          Territory tiles are rendered as claimable zones. Rival sectors stay orange, your sectors stay green, and active battlegrounds glow yellow.
+          The running grid and bicycle grid are now separate. Rival sectors stay orange, your sectors stay green, and active battlegrounds glow yellow.
         </Text>
         <View style={styles.mapCardLarge}>
           <MapView style={styles.mapSurfaceLarge} region={liveRegion} showsUserLocation={true} followsUserLocation={true}>
-            {territoryTiles.map((tile) => (
+            {visibleTiles.map((tile) => (
               <Polygon
-                key={tile.id}
+                key={`${tile.mode ?? 'run'}:${tile.id}`}
                 coordinates={getTilePolygon(tile.id)}
                 fillColor={
                   tile.owner === 'you'
@@ -59,7 +71,7 @@ export function MapScreen() {
 
             {contestedTiles.map((tile) => (
               <Marker
-                key={`contest-${tile.id}`}
+                key={`contest-${tile.mode ?? 'run'}-${tile.id}`}
                 coordinate={tile.center}
                 pinColor="#facc15"
                 title={tile.zoneName ?? tile.id}
@@ -92,6 +104,7 @@ export function MapScreen() {
       </SectionCard>
 
       <SectionCard title="Zone status">
+        <Text style={styles.itemLine}>Visible {mapMode} sectors: {visibleTiles.length}</Text>
         <Text style={styles.itemLine}>Captured this run: {metrics.capturedTiles} tiles</Text>
         <Text style={styles.itemLine}>Contested sectors: {contestedTiles.length}</Text>
         <Text style={styles.itemLine}>Tracked route points: {routePoints.length}</Text>

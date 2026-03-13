@@ -6,6 +6,7 @@ import { screenStyles as styles } from '../ui/screenStyles';
 
 export function ActivityScreen() {
   const {
+    activityMode,
     currentLocation,
     currentUser,
     isLocating,
@@ -15,6 +16,7 @@ export function ActivityScreen() {
     permissionRequested,
     races,
     sessionActive,
+    setActivityMode,
     startSession,
     stopSession,
   } = useAppState();
@@ -28,9 +30,23 @@ export function ActivityScreen() {
         <Text style={styles.eyebrow}>{sessionActive ? 'Session Live' : 'Session Ready'}</Text>
         <Text style={styles.sectionHeadline}>Start a live capture run</Text>
         <Text style={styles.sectionText}>
-          Your run should feel clean and competitive: timer, pace, route, captured tiles, and nearby rivals.
+          Every mode behaves differently. Walk counts only at human pace, run owns the street grid, and bike competes on a separate territory layer.
         </Text>
       </View>
+
+      <SectionCard title="Movement mode">
+        <View style={styles.segmentedRow}>
+          {(['walk', 'run', 'bike'] as const).map((mode) => {
+            const active = activityMode === mode;
+
+            return (
+              <Pressable key={mode} onPress={() => setActivityMode(mode)} style={[styles.segmentedButton, active && styles.segmentedButtonActive]}>
+                <Text style={[styles.segmentedButtonText, active && styles.segmentedButtonTextActive]}>{mode}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </SectionCard>
 
       <View style={styles.metricGrid}>
         <BigMetric title="Distance" value={`${metrics.distanceKm.toFixed(2)} km`} />
@@ -60,6 +76,14 @@ export function ActivityScreen() {
             : permissionRequested
               ? 'Permission requested but not granted yet.'
               : 'Permission will be requested when you start the session.'}
+        </Text>
+        <Text style={styles.sectionSubtle}>Current speed: {metrics.currentSpeedKmh.toFixed(1)} km/h</Text>
+        <Text style={styles.sectionSubtle}>
+          {activityMode === 'walk'
+            ? 'Walk steps stop counting if speed gets too high.'
+            : activityMode === 'bike'
+              ? 'Bike mode tracks territory and speed, not walking steps.'
+              : 'Run mode keeps step count active while pace stays realistic.'}
         </Text>
         {locationError ? (
           <View style={styles.infoRow}>

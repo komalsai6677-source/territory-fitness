@@ -1,4 +1,5 @@
 export type TabKey = 'home' | 'activity' | 'map' | 'social' | 'profile';
+export type TerritoryMode = 'walk' | 'run' | 'bike';
 
 export type RunnerProfile = {
   id: string;
@@ -21,6 +22,7 @@ export type TerritoryTile = {
   effortKm?: number;
   contested?: boolean;
   zoneName?: string;
+  mode?: TerritoryMode;
 };
 
 export type SessionMetrics = {
@@ -33,6 +35,8 @@ export type SessionMetrics = {
   elevationGainMeters: number;
   cadence: number;
   relativeEffort: number;
+  currentSpeedKmh: number;
+  mode: TerritoryMode;
 };
 
 export type SessionSummary = {
@@ -108,4 +112,8 @@ export type CurrentUserSummary = {
   wins: number;
   losses: number;
   streak: number;
+  contact?: string;
+  city?: string;
+  avatarKey?: string;
+  photoUrl?: string;
 };

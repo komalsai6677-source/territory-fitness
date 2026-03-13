@@ -40,6 +40,29 @@ export const screenStyles = StyleSheet.create({
     gap: 12,
     marginTop: 20,
   },
+  segmentedRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  segmentedButton: {
+    backgroundColor: '#11212c',
+    borderRadius: 999,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  segmentedButtonActive: {
+    backgroundColor: '#f97316',
+  },
+  segmentedButtonText: {
+    color: '#d5dee5',
+    fontSize: 12,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+  },
+  segmentedButtonTextActive: {
+    color: '#fff7ed',
+  },
   sectionHeadline: {
     color: '#f8fafc',
     fontSize: 28,
@@ -289,7 +312,24 @@ export const screenStyles = StyleSheet.create({
   profileBanner: {
     backgroundColor: '#17212b',
     borderRadius: 24,
+    flexDirection: 'row',
+    gap: 16,
     padding: 22,
+  },
+  profileBannerBody: {
+    flex: 1,
+  },
+  profileAvatar: {
+    alignItems: 'center',
+    borderRadius: 999,
+    height: 68,
+    justifyContent: 'center',
+    width: 68,
+  },
+  profileAvatarText: {
+    color: '#fff7ed',
+    fontSize: 28,
+    fontWeight: '900',
   },
   profileHandle: {
     color: '#f59e0b',

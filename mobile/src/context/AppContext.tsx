@@ -22,6 +22,7 @@ import {
   RunnerProfile,
   SessionMetrics,
   SessionSummary,
+  TerritoryMode,
   TerritoryTile,
 } from '../types';
 
@@ -30,7 +31,16 @@ type RoutePoint = {
   longitude: number;
 };
 
+type LocalProfile = {
+  name: string;
+  contact: string;
+  city: string;
+  avatarKey: string;
+  photoUrl?: string;
+};
+
 type AppContextValue = {
+  authenticated: boolean;
   permissionGranted: boolean;
   permissionRequested: boolean;
   sessionActive: boolean;
@@ -49,6 +59,13 @@ type AppContextValue = {
   nearbyRunners: RunnerProfile[];
   leaderboard: Array<{ name: string; tiles: number; km: number }>;
   metrics: SessionMetrics;
+  activityMode: TerritoryMode;
+  mapMode: 'run' | 'bike';
+  login: (payload: LocalProfile) => Promise<void>;
+  updateProfile: (payload: LocalProfile) => Promise<void>;
+  logout: () => Promise<void>;
+  setActivityMode: (mode: TerritoryMode) => void;
+  setMapMode: (mode: 'run' | 'bike') => void;
   startSession: () => Promise<void>;
   stopSession: () => void;
   sendGroupMessage: (groupId: string, text: string) => Promise<void>;
@@ -56,7 +73,14 @@ type AppContextValue = {
 
 const AppContext = createContext<AppContextValue | null>(null);
 
+const STEP_SPEED_LIMITS: Record<TerritoryMode, number> = {
+  walk: 7.5,
+  run: 24,
+  bike: 0,
+};
+
 export function AppProvider({ children }: { children: React.ReactNode }) {
+  const [authenticated, setAuthenticated] = useState(false);
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [permissionRequested, setPermissionRequested] = useState(false);
   const [sessionActive, setSessionActive] = useState(false);
@@ -65,11 +89,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [currentLocation, setCurrentLocation] = useState<RoutePoint | null>(null);
   const [routePoints, setRoutePoints] = useState<RoutePoint[]>([]);
   const [distanceMeters, setDistanceMeters] = useState(0);
+  const [stepEligibleMeters, setStepEligibleMeters] = useState(0);
+  const [elevationGainMeters, setElevationGainMeters] = useState(0);
+  const [currentSpeedKmh, setCurrentSpeedKmh] = useState(0);
   const [durationSeconds, setDurationSeconds] = useState(0);
   const [capturedTileIds, setCapturedTileIds] = useState<string[]>([]);
   const [territoryTiles, setTerritoryTiles] = useState<TerritoryTile[]>(seedTerritoryTiles);
   const [sessionHistory, setSessionHistory] = useState<SessionSummary[]>([]);
   const [currentUser, setCurrentUser] = useState<CurrentUserSummary | null>(null);
+  const [localProfile, setLocalProfile] = useState<LocalProfile | null>(null);
   const [groups, setGroups] = useState<GroupSummary[]>([]);
   const [challenges, setChallenges] = useState<ChallengeSummary[]>([]);
   const [races, setRaces] = useState<RaceSummary[]>([]);
@@ -77,10 +105,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [serverLeaderboard, setServerLeaderboard] = useState<Array<{ name: string; tiles: number; km: number }>>([]);
   const [serverNearbyRunners, setServerNearbyRunners] = useState<RunnerProfile[]>([]);
+  const [activityMode, setActivityMode] = useState<TerritoryMode>('run');
+  const [mapMode, setMapMode] = useState<'run' | 'bike'>('run');
   const tokenRef = useRef<string | null>(null);
   const watcherRef = useRef<Location.LocationSubscription | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastPointRef = useRef<RoutePoint | null>(null);
+  const lastSampleAtRef = useRef<number | null>(null);
   const remoteSessionIdRef = useRef<string | null>(null);
   const hydratedRef = useRef(false);
 
@@ -103,8 +134,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     void savePersistedState({
       sessions: sessionHistory,
       territoryTiles,
+      profile: localProfile ?? undefined,
+      preferredActivityMode: activityMode,
+      preferredMapMode: mapMode,
     });
-  }, [sessionHistory, territoryTiles]);
+  }, [activityMode, localProfile, mapMode, sessionHistory, territoryTiles]);
 
   const nearbyRunners = useMemo(() => {
     const source = serverNearbyRunners.length > 0 ? serverNearbyRunners : seedNearbyRunners;
@@ -124,13 +158,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       durationSeconds,
       paceLabel: formatPace(distanceKm, durationSeconds),
       capturedTiles: capturedTileIds.length,
-      steps: Math.max(0, Math.round(distanceMeters / 0.78)),
-      calories: Math.max(0, Math.round(distanceKm * 62)),
-      elevationGainMeters: Math.max(0, Math.round(routePoints.length * 0.9)),
-      cadence: distanceMeters > 0 && durationSeconds > 0 ? Math.round((distanceMeters / 0.78 / durationSeconds) * 60) : 0,
-      relativeEffort: Math.max(0, Math.round(distanceKm * 12 + capturedTileIds.length * 18 + durationSeconds / 90)),
+      steps: Math.max(0, Math.round(stepEligibleMeters / 0.78)),
+      calories: Math.max(0, Math.round(distanceKm * (activityMode === 'bike' ? 34 : activityMode === 'walk' ? 44 : 62))),
+      elevationGainMeters,
+      cadence: stepEligibleMeters > 0 && durationSeconds > 0 ? Math.round((stepEligibleMeters / 0.78 / durationSeconds) * 60) : 0,
+      relativeEffort: Math.max(
+        0,
+        Math.round(distanceKm * (activityMode === 'bike' ? 9 : 12) + capturedTileIds.length * 18 + elevationGainMeters / 6 + durationSeconds / 90)
+      ),
+      currentSpeedKmh,
+      mode: activityMode,
     };
-  }, [capturedTileIds.length, distanceMeters, durationSeconds, routePoints.length]);
+  }, [activityMode, capturedTileIds.length, currentSpeedKmh, distanceMeters, durationSeconds, elevationGainMeters, stepEligibleMeters]);
 
   const leaderboard = useMemo(() => {
     if (serverLeaderboard.length > 0) {
@@ -142,12 +181,41 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     return [
       { name: 'Nina', tiles: 182, km: 128 },
-      { name: 'You', tiles: youTiles, km: youKm },
+      { name: currentUser?.name ?? 'You', tiles: youTiles, km: youKm },
       { name: 'Omar', tiles: 112, km: 83 },
     ].sort((left, right) => right.tiles - left.tiles);
-  }, [metrics.capturedTiles, metrics.distanceKm, serverLeaderboard]);
+  }, [currentUser?.name, metrics.capturedTiles, metrics.distanceKm, serverLeaderboard]);
+
+  async function login(profile: LocalProfile) {
+    setAuthenticated(true);
+    setLocalProfile(profile);
+    await hydrateServerState(profile);
+  }
+
+  async function updateProfile(profile: LocalProfile) {
+    setLocalProfile(profile);
+    setCurrentUser((existing) => (existing ? applyProfileOverlay(existing, profile) : null));
+  }
+
+  async function logout() {
+    watcherRef.current?.remove();
+    watcherRef.current = null;
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    setAuthenticated(false);
+    setLocalProfile(null);
+    setCurrentUser(null);
+    setSessionActive(false);
+  }
 
   async function startSession() {
+    if (!authenticated) {
+      setLocationError('Create your runner profile first.');
+      return;
+    }
+
     setIsLocating(true);
     setLocationError(null);
     setPermissionRequested(true);
@@ -181,7 +249,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
       resetSession(initialPoint);
       if (tokenRef.current) {
-        const remoteSession = await startRemoteSession(tokenRef.current, initialPoint);
+        const remoteSession = await startRemoteSession(tokenRef.current, initialPoint, activityMode);
         remoteSessionIdRef.current = remoteSession.id;
       }
       setSessionActive(true);
@@ -194,7 +262,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       watcherRef.current = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.BestForNavigation,
-          distanceInterval: 5,
+          distanceInterval: activityMode === 'bike' ? 12 : 5,
           timeInterval: 3000,
           mayShowUserSettingsDialog: true,
         },
@@ -209,12 +277,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
           if (lastPointRef.current) {
             const segmentDistance = getDistanceMeters(lastPointRef.current, nextPoint);
+            const sampleAt = Date.now();
+            const elapsedSeconds = Math.max(1, (sampleAt - (lastSampleAtRef.current ?? sampleAt - 1000)) / 1000);
+            const speedKmh = (segmentDistance / elapsedSeconds) * 3.6;
+
+            setCurrentSpeedKmh(Number(speedKmh.toFixed(1)));
             if (segmentDistance > 1) {
               setDistanceMeters((value) => value + segmentDistance);
+              setElevationGainMeters((value) => value + Math.max(0, Math.round(segmentDistance * 0.012)));
+              if (activityMode !== 'bike' && speedKmh <= STEP_SPEED_LIMITS[activityMode]) {
+                setStepEligibleMeters((value) => value + segmentDistance);
+              }
             }
           }
 
           lastPointRef.current = nextPoint;
+          lastSampleAtRef.current = Date.now();
 
           const tileId = getTileId(nextPoint.latitude, nextPoint.longitude);
           setCapturedTileIds((tileIds) => {
@@ -223,7 +301,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             }
 
             const nextTileIds = [...tileIds, tileId];
-            setTerritoryTiles((existingTiles) => mergeTiles(existingTiles, nextTileIds));
+            setTerritoryTiles((existingTiles) => mergeTiles(existingTiles, nextTileIds, activityMode));
             return nextTileIds;
           });
 
@@ -255,12 +333,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     watcherRef.current?.remove();
     watcherRef.current = null;
     setDistanceMeters(0);
+    setStepEligibleMeters(0);
+    setElevationGainMeters(0);
+    setCurrentSpeedKmh(0);
     setDurationSeconds(0);
     setCapturedTileIds([getTileId(initialPoint.latitude, initialPoint.longitude)]);
-    setTerritoryTiles(mergeTiles(seedTerritoryTiles, [getTileId(initialPoint.latitude, initialPoint.longitude)]));
+    setTerritoryTiles((existingTiles) => mergeTiles(existingTiles.length ? existingTiles : seedTerritoryTiles, [getTileId(initialPoint.latitude, initialPoint.longitude)], activityMode));
     setCurrentLocation(initialPoint);
     setRoutePoints([initialPoint]);
     lastPointRef.current = initialPoint;
+    lastSampleAtRef.current = Date.now();
   }
 
   function stopSession() {
@@ -288,7 +370,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const currentSessionId = remoteSessionIdRef.current;
       remoteSessionIdRef.current = null;
       void stopRemoteSession(tokenRef.current, currentSessionId)
-        .then(() => hydrateServerState())
+        .then(() => hydrateServerState(localProfile ?? undefined))
         .catch(() => {
           setLocationError('Remote session stop failed.');
         });
@@ -304,6 +386,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (persistedState) {
         setSessionHistory(persistedState.sessions ?? []);
         setTerritoryTiles(persistedState.territoryTiles?.length ? persistedState.territoryTiles : seedTerritoryTiles);
+        setActivityMode(persistedState.preferredActivityMode ?? 'run');
+        setMapMode(persistedState.preferredMapMode ?? 'run');
+        if (persistedState.profile) {
+          setLocalProfile(persistedState.profile);
+          setAuthenticated(true);
+        }
       }
     } catch {
       setLocationError('Saved progress could not be loaded.');
@@ -313,7 +401,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  async function hydrateServerState() {
+  async function hydrateServerState(profileOverride?: LocalProfile) {
     try {
       const auth = await loginDemoUser();
       if (!auth?.token) {
@@ -322,7 +410,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
       tokenRef.current = auth.token;
       const bootstrap = await fetchBootstrap(auth.token);
-      setCurrentUser(bootstrap.currentUser);
+      const nextProfile = profileOverride ?? localProfile;
+      setCurrentUser(nextProfile ? applyProfileOverlay(bootstrap.currentUser, nextProfile) : bootstrap.currentUser);
       setGroups(bootstrap.groups);
       setChallenges(bootstrap.challenges);
       setRaces(bootstrap.races);
@@ -336,6 +425,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           effortKm: tile.effortKm,
           contested: tile.contested,
           zoneName: tile.zoneName,
+          mode: tile.mode,
         }))
       );
       setServerLeaderboard(bootstrap.leaderboard.map((entry) => ({ name: entry.name, tiles: entry.tiles, km: entry.km })));
@@ -367,6 +457,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   return (
     <AppContext.Provider
       value={{
+        authenticated,
         permissionGranted,
         permissionRequested,
         sessionActive,
@@ -385,6 +476,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         nearbyRunners,
         leaderboard,
         metrics,
+        activityMode,
+        mapMode,
+        login,
+        updateProfile,
+        logout,
+        setActivityMode,
+        setMapMode,
         startSession,
         stopSession,
         sendGroupMessage,
@@ -393,6 +491,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       {children}
     </AppContext.Provider>
   );
+}
+
+function applyProfileOverlay(user: CurrentUserSummary, profile: LocalProfile): CurrentUserSummary {
+  return {
+    ...user,
+    name: profile.name,
+    contact: profile.contact,
+    city: profile.city,
+    avatarKey: profile.avatarKey,
+    photoUrl: profile.photoUrl,
+  };
 }
 
 export function useAppState() {

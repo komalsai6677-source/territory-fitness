@@ -107,6 +107,9 @@ function createSeedDatabase() {
         wins: 18,
         losses: 6,
         streak: 4,
+        contact: '+91 90000 10001',
+        city: 'Mumbai',
+        avatarKey: 'storm',
         lastSession: null,
       },
       {
@@ -131,6 +134,9 @@ function createSeedDatabase() {
         wins: 11,
         losses: 8,
         streak: 3,
+        contact: '+91 90000 10002',
+        city: 'Mumbai',
+        avatarKey: 'ember',
         lastSession: null,
       },
       {
@@ -155,6 +161,9 @@ function createSeedDatabase() {
         wins: 9,
         losses: 7,
         streak: 1,
+        contact: '+91 90000 10003',
+        city: 'Mumbai',
+        avatarKey: 'ocean',
         lastSession: null,
       },
       {
@@ -179,6 +188,9 @@ function createSeedDatabase() {
         wins: 7,
         losses: 5,
         streak: 2,
+        contact: '+91 90000 10004',
+        city: 'Mumbai',
+        avatarKey: 'neon',
         lastSession: null,
       },
     ],
@@ -193,10 +205,11 @@ function createSeedDatabase() {
       { id: 'c3', title: 'Monthly Endurance', period: 'Monthly', target: 'Run 80 km', rewardPoints: 900, progress: 26, total: 80 },
     ],
     territory: [
-      { id: '15781:60696', owner: 'you', center: { latitude: 18.9378, longitude: 72.8358 }, effortKm: 5.4, contested: false, zoneName: 'Harbour Edge' },
-      { id: '15781:60697', owner: 'you', center: { latitude: 18.9378, longitude: 72.837 }, effortKm: 3.1, contested: false, zoneName: 'Fort Circuit' },
-      { id: '15782:60696', owner: 'open', center: { latitude: 18.939, longitude: 72.8358 }, effortKm: 0, contested: false, zoneName: 'Clock Tower Lane' },
-      { id: '15782:60697', owner: 'u1', center: { latitude: 18.939, longitude: 72.837 }, effortKm: 6.2, contested: true, zoneName: 'Marine Sprint Gate' },
+      { id: '15781:60696', owner: 'you', center: { latitude: 18.9378, longitude: 72.8358 }, effortKm: 5.4, contested: false, zoneName: 'Harbour Edge', mode: 'run' },
+      { id: '15781:60697', owner: 'you', center: { latitude: 18.9378, longitude: 72.837 }, effortKm: 3.1, contested: false, zoneName: 'Fort Circuit', mode: 'bike' },
+      { id: '15782:60696', owner: 'open', center: { latitude: 18.939, longitude: 72.8358 }, effortKm: 0, contested: false, zoneName: 'Clock Tower Lane', mode: 'run' },
+      { id: '15782:60697', owner: 'u1', center: { latitude: 18.939, longitude: 72.837 }, effortKm: 6.2, contested: true, zoneName: 'Marine Sprint Gate', mode: 'run' },
+      { id: '15783:60697', owner: 'u2', center: { latitude: 18.9402, longitude: 72.837 }, effortKm: 8.4, contested: false, zoneName: 'Flyover Wheel Line', mode: 'bike' },
     ],
     races: [
       {

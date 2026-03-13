@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import MapView, { Marker, Polygon } from 'react-native-maps';
 
 import { useAppState } from '../context/AppContext';
@@ -18,9 +18,11 @@ export function HomeScreen() {
     currentUser,
     feed,
     leaderboard,
+    mapMode,
     metrics,
     nearbyRunners,
     races,
+    setMapMode,
     sessionActive,
     territoryTiles,
   } = useAppState();
@@ -39,7 +41,9 @@ export function HomeScreen() {
         longitudeDelta: 0.008,
       };
 
-  const battlegroundTiles = territoryTiles
+  const visibleTiles = territoryTiles.filter((tile) => (tile.mode ?? 'run') === mapMode);
+
+  const battlegroundTiles = visibleTiles
     .filter((tile) => tile.owner === 'rival' || tile.contested)
     .sort((left, right) => Number(right.effortKm ?? 0) - Number(left.effortKm ?? 0))
     .slice(0, 3);
@@ -63,6 +67,17 @@ export function HomeScreen() {
       </View>
 
       <SectionCard title="Live strategy map">
+        <View style={styles.segmentedRow}>
+          {(['run', 'bike'] as const).map((mode) => {
+            const active = mapMode === mode;
+
+            return (
+              <Pressable key={mode} onPress={() => setMapMode(mode)} style={[styles.segmentedButton, active && styles.segmentedButtonActive]}>
+                <Text style={[styles.segmentedButtonText, active && styles.segmentedButtonTextActive]}>{mode} map</Text>
+              </Pressable>
+            );
+          })}
+        </View>
         <Text style={styles.sectionText}>
           {currentLocation
             ? `Current location ${currentLocation.latitude.toFixed(5)}, ${currentLocation.longitude.toFixed(5)}`
@@ -70,9 +85,9 @@ export function HomeScreen() {
         </Text>
         <View style={styles.mapCard}>
           <MapView style={styles.mapSurface} region={liveRegion} showsUserLocation={true} followsUserLocation={true}>
-            {territoryTiles.slice(-16).map((tile) => (
+            {visibleTiles.slice(-16).map((tile) => (
               <Polygon
-                key={tile.id}
+                key={`${tile.mode ?? 'run'}:${tile.id}`}
                 coordinates={getTilePolygon(tile.id)}
                 fillColor={
                   tile.owner === 'you'
@@ -95,7 +110,7 @@ export function HomeScreen() {
             ))}
             {battlegroundTiles.map((tile) => (
               <Marker
-                key={`target-${tile.id}`}
+                key={`target-${tile.mode ?? 'run'}-${tile.id}`}
                 coordinate={tile.center}
                 pinColor="#f97316"
                 title={tile.zoneName ?? tile.id}
@@ -105,8 +120,8 @@ export function HomeScreen() {
           </MapView>
         </View>
         <View style={styles.inlineStatRow}>
-          <Text style={styles.sectionSubtle}>{sessionActive ? `Live pace ${metrics.paceLabel} min/km` : 'No live run yet'}</Text>
-          <Text style={styles.sectionSubtle}>{metrics.capturedTiles} fresh tiles</Text>
+          <Text style={styles.sectionSubtle}>{sessionActive ? `Live ${metrics.mode} pace ${metrics.paceLabel}` : 'No live run yet'}</Text>
+          <Text style={styles.sectionSubtle}>{mapMode === 'bike' ? 'Bike districts visible' : `${metrics.capturedTiles} fresh tiles`}</Text>
         </View>
       </SectionCard>
 

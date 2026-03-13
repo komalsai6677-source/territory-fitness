@@ -89,7 +89,7 @@ const server = http.createServer(async (request, response) => {
     if (request.method === 'POST' && url.pathname === '/sessions/start') {
       const auth = requireAuth(request);
       const body = await readJsonBody(request);
-      const session = await engine.startSession(auth.userId, body.location);
+      const session = await engine.startSession(auth.userId, body.location, body.mode);
       return sendJson(response, 201, session);
     }
 

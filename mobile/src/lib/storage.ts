@@ -1,12 +1,21 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { SessionSummary, TerritoryTile } from '../types';
+import { SessionSummary, TerritoryMode, TerritoryTile } from '../types';
 
 const STORAGE_KEY = 'territory-fitness-state';
 
 export type PersistedState = {
   sessions: SessionSummary[];
   territoryTiles: TerritoryTile[];
+  profile?: {
+    name: string;
+    contact: string;
+    city: string;
+    avatarKey: string;
+    photoUrl?: string;
+  };
+  preferredActivityMode?: TerritoryMode;
+  preferredMapMode?: Extract<TerritoryMode, 'run' | 'bike'>;
 };
 
 export async function loadPersistedState() {
