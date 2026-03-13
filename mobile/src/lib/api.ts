@@ -51,6 +51,9 @@ export async function fetchBootstrap(token: string) {
       badges: string[];
       stickers: string[];
       rewards: string[];
+      wins: number;
+      losses: number;
+      streak: number;
     };
     nearby: Array<{
       id: string;
@@ -83,6 +86,17 @@ export async function fetchBootstrap(token: string) {
       total: number;
       completed: boolean;
     }>;
+    races: Array<{
+      id: string;
+      title: string;
+      type: 'friends' | 'global' | 'tile-rush';
+      distanceKm: number;
+      status: 'countdown' | 'live' | 'finished';
+      startsAt: string;
+      entrants: number;
+      prize: string;
+      city?: string;
+    }>;
     feed: Array<{
       id: string;
       actor: string;
@@ -103,6 +117,9 @@ export async function fetchBootstrap(token: string) {
         latitude: number;
         longitude: number;
       };
+      effortKm?: number;
+      contested?: boolean;
+      zoneName?: string;
     }>;
   };
 }

@@ -100,6 +100,9 @@ export const screenStyles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
+  alertTag: {
+    backgroundColor: '#3f2e10',
+  },
   vibeTagText: {
     color: '#e5e7eb',
     fontSize: 12,
@@ -255,6 +258,19 @@ export const screenStyles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 21,
   },
+  inlineStatRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  focusTileCard: {
+    alignItems: 'center',
+    backgroundColor: '#101f29',
+    borderRadius: 16,
+    flexDirection: 'row',
+    gap: 12,
+    padding: 14,
+  },
   statusPill: {
     alignSelf: 'flex-start',
     backgroundColor: '#123341',
@@ -303,5 +319,17 @@ export const screenStyles = StyleSheet.create({
   mapSurface: {
     flex: 1,
     minHeight: 280,
+  },
+  mapCardLarge: {
+    backgroundColor: '#0d1720',
+    borderColor: '#1c2a36',
+    borderRadius: 22,
+    borderWidth: 1,
+    minHeight: 420,
+    overflow: 'hidden',
+  },
+  mapSurfaceLarge: {
+    flex: 1,
+    minHeight: 420,
   },
 });

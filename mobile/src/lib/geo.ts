@@ -1,7 +1,7 @@
 import { TerritoryTile } from '../types';
 
 const EARTH_RADIUS_METERS = 6371000;
-const TILE_SIZE_DEGREES = 0.0012;
+export const TILE_SIZE_DEGREES = 0.0012;
 
 export function toRadians(value: number) {
   return (value * Math.PI) / 180;
@@ -49,6 +49,21 @@ export function getTileCenterFromId(tileId: string) {
     latitude: latBucket * TILE_SIZE_DEGREES + TILE_SIZE_DEGREES / 2,
     longitude: lonBucket * TILE_SIZE_DEGREES + TILE_SIZE_DEGREES / 2,
   };
+}
+
+export function getTilePolygon(tileId: string) {
+  const [latBucket, lonBucket] = tileId.split(':').map(Number);
+  const minLatitude = latBucket * TILE_SIZE_DEGREES;
+  const minLongitude = lonBucket * TILE_SIZE_DEGREES;
+  const maxLatitude = minLatitude + TILE_SIZE_DEGREES;
+  const maxLongitude = minLongitude + TILE_SIZE_DEGREES;
+
+  return [
+    { latitude: minLatitude, longitude: minLongitude },
+    { latitude: minLatitude, longitude: maxLongitude },
+    { latitude: maxLatitude, longitude: maxLongitude },
+    { latitude: maxLatitude, longitude: minLongitude },
+  ];
 }
 
 export function getTileIdFromRegion(region: {

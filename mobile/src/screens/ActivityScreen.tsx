@@ -7,11 +7,13 @@ import { screenStyles as styles } from '../ui/screenStyles';
 export function ActivityScreen() {
   const {
     currentLocation,
+    currentUser,
     isLocating,
     locationError,
     metrics,
     permissionGranted,
     permissionRequested,
+    races,
     sessionActive,
     startSession,
     stopSession,
@@ -35,6 +37,10 @@ export function ActivityScreen() {
         <BigMetric title="Pace" value={metrics.paceLabel} />
         <BigMetric title="Time" value={`${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`} />
         <BigMetric title="Tiles" value={String(metrics.capturedTiles)} />
+        <BigMetric title="Steps" value={String(metrics.steps)} />
+        <BigMetric title="Calories" value={`${metrics.calories} kcal`} />
+        <BigMetric title="Elevation" value={`${metrics.elevationGainMeters} m`} />
+        <BigMetric title="Cadence" value={`${metrics.cadence} spm`} />
       </View>
 
       <SectionCard title="Tracking status">
@@ -62,11 +68,34 @@ export function ActivityScreen() {
         ) : null}
       </SectionCard>
 
+      <SectionCard title="Performance model">
+        <Text style={styles.itemLine}>Relative effort: {metrics.relativeEffort} XP</Text>
+        <Text style={styles.itemLine}>Session streak: {currentUser?.streak ?? 0} wins</Text>
+        <Text style={styles.itemLine}>Record: {currentUser?.wins ?? 0} W / {currentUser?.losses ?? 0} L</Text>
+      </SectionCard>
+
+      <SectionCard title="Race modes">
+        {races.slice(0, 3).map((race) => (
+          <View key={race.id} style={styles.focusTileCard}>
+            <View style={styles.runnerInfo}>
+              <Text style={styles.runnerName}>{race.title}</Text>
+              <Text style={styles.runnerMeta}>
+                {race.distanceKm} km | {race.entrants} entrants | {race.prize}
+              </Text>
+            </View>
+            <View style={styles.vibeTag}>
+              <Text style={styles.vibeTagText}>{race.status}</Text>
+            </View>
+          </View>
+        ))}
+      </SectionCard>
+
       <SectionCard title="Workout modes">
         <Text style={styles.itemLine}>Free run</Text>
         <Text style={styles.itemLine}>Territory attack</Text>
-        <Text style={styles.itemLine}>Recovery walk</Text>
-        <Text style={styles.itemLine}>Group challenge</Text>
+        <Text style={styles.itemLine}>Race with friend</Text>
+        <Text style={styles.itemLine}>Global sprint lobby</Text>
+        <Text style={styles.itemLine}>Tile rush battleground</Text>
       </SectionCard>
 
       {sessionActive ? (

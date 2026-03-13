@@ -18,6 +18,7 @@ import {
   CurrentUserSummary,
   FeedItem,
   GroupSummary,
+  RaceSummary,
   RunnerProfile,
   SessionMetrics,
   SessionSummary,
@@ -42,6 +43,7 @@ type AppContextValue = {
   currentUser: CurrentUserSummary | null;
   groups: GroupSummary[];
   challenges: ChallengeSummary[];
+  races: RaceSummary[];
   feed: FeedItem[];
   chatMessages: ChatMessage[];
   nearbyRunners: RunnerProfile[];
@@ -70,6 +72,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<CurrentUserSummary | null>(null);
   const [groups, setGroups] = useState<GroupSummary[]>([]);
   const [challenges, setChallenges] = useState<ChallengeSummary[]>([]);
+  const [races, setRaces] = useState<RaceSummary[]>([]);
   const [feed, setFeed] = useState<FeedItem[]>([]);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [serverLeaderboard, setServerLeaderboard] = useState<Array<{ name: string; tiles: number; km: number }>>([]);
@@ -121,8 +124,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       durationSeconds,
       paceLabel: formatPace(distanceKm, durationSeconds),
       capturedTiles: capturedTileIds.length,
+      steps: Math.max(0, Math.round(distanceMeters / 0.78)),
+      calories: Math.max(0, Math.round(distanceKm * 62)),
+      elevationGainMeters: Math.max(0, Math.round(routePoints.length * 0.9)),
+      cadence: distanceMeters > 0 && durationSeconds > 0 ? Math.round((distanceMeters / 0.78 / durationSeconds) * 60) : 0,
+      relativeEffort: Math.max(0, Math.round(distanceKm * 12 + capturedTileIds.length * 18 + durationSeconds / 90)),
     };
-  }, [capturedTileIds.length, distanceMeters, durationSeconds]);
+  }, [capturedTileIds.length, distanceMeters, durationSeconds, routePoints.length]);
 
   const leaderboard = useMemo(() => {
     if (serverLeaderboard.length > 0) {
@@ -317,6 +325,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setCurrentUser(bootstrap.currentUser);
       setGroups(bootstrap.groups);
       setChallenges(bootstrap.challenges);
+      setRaces(bootstrap.races);
       setFeed(bootstrap.feed);
       setChatMessages(bootstrap.chatMessages);
       setTerritoryTiles(
@@ -324,6 +333,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           id: tile.id,
           center: tile.center,
           owner: tile.owner === 'open' || tile.owner === 'you' || tile.owner === 'rival' ? tile.owner : 'rival',
+          effortKm: tile.effortKm,
+          contested: tile.contested,
+          zoneName: tile.zoneName,
         }))
       );
       setServerLeaderboard(bootstrap.leaderboard.map((entry) => ({ name: entry.name, tiles: entry.tiles, km: entry.km })));
@@ -367,6 +379,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         currentUser,
         groups,
         challenges,
+        races,
         feed,
         chatMessages,
         nearbyRunners,

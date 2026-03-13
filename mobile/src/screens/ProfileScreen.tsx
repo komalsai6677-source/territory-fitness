@@ -13,9 +13,15 @@ export function ProfileScreen() {
         <Text style={styles.profileHandle}>@you</Text>
         <Text style={styles.profileName}>{currentUser?.name ?? 'Territory Runner'}</Text>
         <Text style={styles.profileMeta}>
-          {(currentUser?.totalTiles ?? 124) + metrics.capturedTiles} tiles | {((currentUser?.totalDistanceKm ?? 96) + metrics.distanceKm).toFixed(1)} km this month | Rank #2 local
+          {(currentUser?.totalTiles ?? 124) + metrics.capturedTiles} tiles | {((currentUser?.totalDistanceKm ?? 96) + metrics.distanceKm).toFixed(1)} km this month | {currentUser?.wins ?? 0} wins this season
         </Text>
       </View>
+
+      <SectionCard title="League record">
+        <Text style={styles.sectionText}>Wins: {currentUser?.wins ?? 0}</Text>
+        <Text style={styles.sectionText}>Losses: {currentUser?.losses ?? 0}</Text>
+        <Text style={styles.sectionText}>Current streak: {currentUser?.streak ?? 0}</Text>
+      </SectionCard>
 
       <SectionCard title="Rewards">
         {currentUser ? (

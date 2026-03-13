@@ -18,6 +18,9 @@ export type TerritoryTile = {
     longitude: number;
   };
   owner: TileOwner;
+  effortKm?: number;
+  contested?: boolean;
+  zoneName?: string;
 };
 
 export type SessionMetrics = {
@@ -25,6 +28,11 @@ export type SessionMetrics = {
   durationSeconds: number;
   paceLabel: string;
   capturedTiles: number;
+  steps: number;
+  calories: number;
+  elevationGainMeters: number;
+  cadence: number;
+  relativeEffort: number;
 };
 
 export type SessionSummary = {
@@ -53,6 +61,18 @@ export type ChallengeSummary = {
   progress: number;
   total: number;
   completed: boolean;
+};
+
+export type RaceSummary = {
+  id: string;
+  title: string;
+  type: 'friends' | 'global' | 'tile-rush';
+  distanceKm: number;
+  status: 'countdown' | 'live' | 'finished';
+  startsAt: string;
+  entrants: number;
+  prize: string;
+  city?: string;
 };
 
 export type FeedItem = {
@@ -85,4 +105,7 @@ export type CurrentUserSummary = {
   badges: string[];
   stickers: string[];
   rewards: string[];
+  wins: number;
+  losses: number;
+  streak: number;
 };

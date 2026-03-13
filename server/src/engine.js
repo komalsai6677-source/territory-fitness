@@ -18,9 +18,10 @@ export async function createEngine() {
         currentUser: sanitizeUser(user),
         nearby: getNearbyRunners(database.users, userId),
         leaderboard: getLeaderboard(database.users),
-        territory: database.territory,
+        territory: mapTerritoryForUser(database.territory, userId),
         groups: database.groups.map((group) => mapGroup(group, database.users)),
         challenges: getChallengesForUser(database, user),
+        races: database.races ?? [],
         feed: database.feed.slice(-8).reverse(),
         chatMessages: getChatMessagesForUser(database, user),
       };
@@ -47,6 +48,9 @@ export async function createEngine() {
         badges: ['Starter Badge'],
         stickers: ['First Steps'],
         points: 0,
+        wins: 0,
+        losses: 0,
+        streak: 0,
         lastSession: null,
       };
 
@@ -98,12 +102,13 @@ export async function createEngine() {
         lastLocation: location,
         route: [location],
         capturedTileIds: [tileId],
+        tileEfforts: { [tileId]: 0.05 },
         distanceMeters: 0,
         status: 'active',
       };
 
       sessions.set(sessionId, session);
-      upsertTerritoryTile(database.territory, tileId, userId);
+      upsertTerritoryTile(database.territory, tileId, userId, 0.05, database.users);
       applyUserProgress(database.users, userId, { active: true, status: 'Session live' });
       await persist(database, sessions);
 
@@ -132,14 +137,16 @@ export async function createEngine() {
       session.route.push(nextLocation);
 
       const tileId = getTileId(nextLocation.latitude, nextLocation.longitude);
+      const segmentKilometers = segmentDistance / 1000;
+      session.tileEfforts[tileId] = Number(((session.tileEfforts[tileId] ?? 0) + segmentKilometers).toFixed(2));
       if (!session.capturedTileIds.includes(tileId)) {
         session.capturedTileIds.push(tileId);
-        upsertTerritoryTile(database.territory, tileId, session.userId);
       }
+      upsertTerritoryTile(database.territory, tileId, session.userId, session.tileEfforts[tileId], database.users);
 
       applyUserProgress(database.users, session.userId, {
         active: true,
-        distanceMeters: session.distanceMeters,
+        distanceMetersDelta: segmentDistance,
         capturedTiles: session.capturedTileIds.length,
         status: 'Capturing territory',
       });
@@ -162,6 +169,7 @@ export async function createEngine() {
         status: 'Finished a run',
         completedSession: summary,
         pointsAwarded: session.capturedTileIds.length * 12 + Math.round(session.distanceMeters / 40),
+        raceResult: session.capturedTileIds.length >= 2 ? 'win' : 'loss',
       });
 
       database.feed.push({
@@ -190,6 +198,9 @@ export async function createEngine() {
     getChallenges(userId = 'you') {
       const user = requireUser(database, userId);
       return getChallengesForUser(database, user);
+    },
+    getRaces() {
+      return database.races ?? [];
     },
     getFeed() {
       return database.feed.slice(-20).reverse();
@@ -267,24 +278,42 @@ function summarizeSession(session) {
   };
 }
 
-function upsertTerritoryTile(territory, tileId, userId) {
-  territory.splice(
-    0,
-    territory.length,
-    ...replaceOrAppendTile(territory, {
-      id: tileId,
-      owner: userId === 'you' ? 'you' : userId,
-      center: getTileCenterFromId(tileId),
-    })
-  );
-}
+function upsertTerritoryTile(territory, tileId, userId, effortKm, users) {
+  const tile = territory.find((entry) => entry.id === tileId);
+  const normalizedOwner = userId === 'you' ? 'you' : userId;
+  const nextEffort = Number(Math.max(effortKm ?? 0.05, 0.05).toFixed(2));
 
-function replaceOrAppendTile(territory, nextTile) {
-  const found = territory.some((tile) => tile.id === nextTile.id);
-  if (found) {
-    return territory.map((tile) => (tile.id === nextTile.id ? nextTile : tile));
+  if (!tile) {
+    territory.push({
+      id: tileId,
+      owner: normalizedOwner,
+      center: getTileCenterFromId(tileId),
+      effortKm: nextEffort,
+      contested: false,
+      zoneName: `Sector ${tileId.replace(':', '-')}`,
+    });
+    return;
   }
-  return [...territory, nextTile];
+
+  if (tile.owner === 'open' || tile.owner === normalizedOwner) {
+    tile.owner = normalizedOwner;
+    tile.effortKm = Number(Math.max(tile.effortKm ?? 0, nextEffort).toFixed(2));
+    tile.contested = false;
+    return;
+  }
+
+  if (nextEffort > (tile.effortKm ?? 0)) {
+    tile.owner = normalizedOwner;
+    tile.effortKm = nextEffort;
+    tile.contested = false;
+    const owner = users.find((entry) => entry.id === userId);
+    if (owner) {
+      owner.points += 30;
+    }
+    return;
+  }
+
+  tile.contested = true;
 }
 
 function applyUserProgress(users, userId, update) {
@@ -297,8 +326,8 @@ function applyUserProgress(users, userId, update) {
     user.active = update.active;
   }
 
-  if (typeof update.distanceMeters === 'number') {
-    user.totalDistanceKm = Number((Math.max(user.totalDistanceKm, 0) + update.distanceMeters / 1000).toFixed(2));
+  if (typeof update.distanceMetersDelta === 'number') {
+    user.totalDistanceKm = Number((Math.max(user.totalDistanceKm, 0) + update.distanceMetersDelta / 1000).toFixed(2));
   }
 
   if (typeof update.capturedTiles === 'number') {
@@ -316,6 +345,16 @@ function applyUserProgress(users, userId, update) {
 
   if (typeof update.pointsAwarded === 'number') {
     user.points += update.pointsAwarded;
+  }
+
+  if (update.raceResult === 'win') {
+    user.wins = (user.wins ?? 0) + 1;
+    user.streak = (user.streak ?? 0) + 1;
+  }
+
+  if (update.raceResult === 'loss') {
+    user.losses = (user.losses ?? 0) + 1;
+    user.streak = 0;
   }
 }
 
@@ -369,12 +408,15 @@ function sanitizeUser(user) {
     followers: user.followers.length,
     following: user.following.length,
     groups: user.groups,
-    badges: user.badges,
-    stickers: user.stickers,
-    points: user.points,
-    rewards: [...user.badges, ...user.stickers],
-    lastSession: user.lastSession,
-  };
+      badges: user.badges,
+      stickers: user.stickers,
+      points: user.points,
+      wins: user.wins ?? 0,
+      losses: user.losses ?? 0,
+      streak: user.streak ?? 0,
+      rewards: [...user.badges, ...user.stickers],
+      lastSession: user.lastSession,
+    };
 }
 
 function createAuthResponse(user) {
@@ -447,4 +489,11 @@ function getChatMessagesForUser(database, user, groupId) {
     .filter((message) => (groupId ? message.groupId === groupId : true))
     .sort((left, right) => left.createdAt.localeCompare(right.createdAt))
     .slice(-25);
+}
+
+function mapTerritoryForUser(territory, userId) {
+  return territory.map((tile) => ({
+    ...tile,
+    owner: tile.owner === userId || tile.owner === 'you' ? 'you' : tile.owner === 'open' ? 'open' : 'rival',
+  }));
 }
