@@ -50,15 +50,19 @@ export function MapScreen() {
                 key={`${tile.mode ?? 'run'}:${tile.id}`}
                 coordinates={getTilePolygon(tile.id)}
                 fillColor={
-                  tile.owner === 'you'
-                    ? 'rgba(34,197,94,0.32)'
-                    : tile.owner === 'rival'
-                      ? 'rgba(249,115,22,0.32)'
-                      : 'rgba(148,163,184,0.18)'
+                  tile.decayLevel && tile.decayLevel > 0.8
+                    ? 'rgba(0,0,0,0.92)'
+                    : tile.owner === 'you'
+                      ? 'rgba(34,197,94,0.36)'
+                      : tile.owner === 'rival'
+                        ? 'rgba(249,115,22,0.34)'
+                        : 'rgba(148,163,184,0.16)'
                 }
                 strokeColor={
                   tile.contested
                     ? '#facc15'
+                    : tile.supplyLine
+                      ? '#38bdf8'
                     : tile.owner === 'you'
                       ? '#22c55e'
                       : tile.owner === 'rival'
@@ -76,6 +80,32 @@ export function MapScreen() {
                 pinColor="#facc15"
                 title={tile.zoneName ?? tile.id}
                 description={`${tile.effortKm?.toFixed(1) ?? '0.0'} km to flip`}
+              />
+            ))}
+
+            {visibleTiles.filter((tile) => tile.ghostName).map((tile) => (
+              <Marker
+                key={`ghost-${tile.mode ?? 'run'}-${tile.id}`}
+                coordinate={{
+                  latitude: tile.center.latitude + 0.00012,
+                  longitude: tile.center.longitude + 0.00012,
+                }}
+                pinColor="#8b5cf6"
+                title={`Ghost: ${tile.ghostName}`}
+                description={`Best split ${tile.ghostPaceLabel ?? '--:--'}`}
+              />
+            ))}
+
+            {visibleTiles.filter((tile) => tile.tag).map((tile) => (
+              <Marker
+                key={`tag-${tile.mode ?? 'run'}-${tile.id}`}
+                coordinate={{
+                  latitude: tile.center.latitude - 0.00012,
+                  longitude: tile.center.longitude - 0.00012,
+                }}
+                pinColor="#14b8a6"
+                title={tile.zoneName ?? tile.id}
+                description={tile.tag}
               />
             ))}
 
@@ -100,6 +130,7 @@ export function MapScreen() {
           <LegendDot color="#94a3b8" label="Open" />
           <LegendDot color="#f97316" label="Rival" />
           <LegendDot color="#facc15" label="Battleground" />
+          <LegendDot color="#38bdf8" label="Supply line" />
         </View>
       </SectionCard>
 
@@ -107,6 +138,8 @@ export function MapScreen() {
         <Text style={styles.itemLine}>Visible {mapMode} sectors: {visibleTiles.length}</Text>
         <Text style={styles.itemLine}>Captured this run: {metrics.capturedTiles} tiles</Text>
         <Text style={styles.itemLine}>Contested sectors: {contestedTiles.length}</Text>
+        <Text style={styles.itemLine}>Supply lines: {visibleTiles.filter((tile) => tile.supplyLine).length}</Text>
+        <Text style={styles.itemLine}>Bounty sectors: {visibleTiles.filter((tile) => (tile.bountyXp ?? 0) > 0).length}</Text>
         <Text style={styles.itemLine}>Tracked route points: {routePoints.length}</Text>
         <Text style={styles.itemLine}>
           {currentLocation ? 'Map centered around your live GPS position.' : 'Using default city region until GPS is ready.'}

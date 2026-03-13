@@ -93,15 +93,19 @@ export function HomeScreen() {
                 key={`${tile.mode ?? 'run'}:${tile.id}`}
                 coordinates={getTilePolygon(tile.id)}
                 fillColor={
-                  tile.owner === 'you'
-                    ? 'rgba(34,197,94,0.35)'
-                    : tile.owner === 'rival'
-                      ? 'rgba(249,115,22,0.35)'
-                      : 'rgba(148,163,184,0.22)'
+                  tile.decayLevel && tile.decayLevel > 0.8
+                    ? 'rgba(0,0,0,0.88)'
+                    : tile.owner === 'you'
+                      ? 'rgba(34,197,94,0.42)'
+                      : tile.owner === 'rival'
+                        ? 'rgba(249,115,22,0.40)'
+                        : 'rgba(148,163,184,0.18)'
                 }
                 strokeColor={
                   tile.contested
                     ? '#facc15'
+                    : tile.supplyLine
+                      ? '#38bdf8'
                     : tile.owner === 'you'
                       ? '#22c55e'
                       : tile.owner === 'rival'
@@ -118,6 +122,15 @@ export function HomeScreen() {
                 pinColor="#f97316"
                 title={tile.zoneName ?? tile.id}
                 description={`${tile.effortKm ?? 0} km to flip`}
+              />
+            ))}
+            {visibleTiles.filter((tile) => tile.bountyXp && tile.bountyXp > 0).map((tile) => (
+              <Marker
+                key={`bounty-${tile.mode ?? 'run'}-${tile.id}`}
+                coordinate={tile.center}
+                pinColor="#a855f7"
+                title={`Bounty: ${tile.zoneName ?? tile.id}`}
+                description={`${tile.bountyXp} XP bonus`}
               />
             ))}
           </MapView>
@@ -158,7 +171,11 @@ export function HomeScreen() {
           <View style={styles.intelCard}>
             <Text style={styles.intelLabel}>Attack window</Text>
             <Text style={styles.intelValue}>{battlegroundTiles[0]?.zoneName ?? 'Awaiting rival move'}</Text>
-            <Text style={styles.sectionSubtle}>{battlegroundTiles[0] ? `Needs ${battlegroundTiles[0].effortKm?.toFixed(1)} km to flip` : 'No contested signal yet'}</Text>
+            <Text style={styles.sectionSubtle}>
+              {battlegroundTiles[0]
+                ? `${battlegroundTiles[0].bountyXp ? `${battlegroundTiles[0].bountyXp} XP bounty | ` : ''}Needs ${battlegroundTiles[0].effortKm?.toFixed(1)} km to flip`
+                : 'No contested signal yet'}
+            </Text>
           </View>
         </View>
       </SectionCard>

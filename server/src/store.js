@@ -205,11 +205,11 @@ function createSeedDatabase() {
       { id: 'c3', title: 'Monthly Endurance', period: 'Monthly', target: 'Run 80 km', rewardPoints: 900, progress: 26, total: 80 },
     ],
     territory: [
-      { id: '15781:60696', owner: 'you', center: { latitude: 18.9378, longitude: 72.8358 }, effortKm: 5.4, contested: false, zoneName: 'Harbour Edge', mode: 'run' },
-      { id: '15781:60697', owner: 'you', center: { latitude: 18.9378, longitude: 72.837 }, effortKm: 3.1, contested: false, zoneName: 'Fort Circuit', mode: 'bike' },
-      { id: '15782:60696', owner: 'open', center: { latitude: 18.939, longitude: 72.8358 }, effortKm: 0, contested: false, zoneName: 'Clock Tower Lane', mode: 'run' },
-      { id: '15782:60697', owner: 'u1', center: { latitude: 18.939, longitude: 72.837 }, effortKm: 6.2, contested: true, zoneName: 'Marine Sprint Gate', mode: 'run' },
-      { id: '15783:60697', owner: 'u2', center: { latitude: 18.9402, longitude: 72.837 }, effortKm: 8.4, contested: false, zoneName: 'Flyover Wheel Line', mode: 'bike' },
+      { id: '15781:60696', owner: 'you', center: { latitude: 18.9378, longitude: 72.8358 }, effortKm: 5.4, contested: false, zoneName: 'Harbour Edge', mode: 'run', lastCapturedAt: Date.now() - 1000 * 60 * 60 * 6, ghostName: 'Nina', ghostPaceLabel: '04:18', tag: 'Hold the line', bountyXp: 0 },
+      { id: '15781:60697', owner: 'you', center: { latitude: 18.9378, longitude: 72.837 }, effortKm: 3.1, contested: false, zoneName: 'Fort Circuit', mode: 'bike', lastCapturedAt: Date.now() - 1000 * 60 * 60 * 18, ghostName: 'Omar', ghostPaceLabel: '03:41', tag: 'Fast lane', bountyXp: 0 },
+      { id: '15782:60696', owner: 'open', center: { latitude: 18.939, longitude: 72.8358 }, effortKm: 0, contested: false, zoneName: 'Clock Tower Lane', mode: 'run', lastCapturedAt: Date.now() - 1000 * 60 * 60 * 24 * 34, ghostName: 'Mia', ghostPaceLabel: '04:51', bountyXp: 220 },
+      { id: '15782:60697', owner: 'u1', center: { latitude: 18.939, longitude: 72.837 }, effortKm: 6.2, contested: true, zoneName: 'Marine Sprint Gate', mode: 'run', lastCapturedAt: Date.now() - 1000 * 60 * 60 * 24 * 40, ghostName: 'Nina', ghostPaceLabel: '04:02', tag: 'Catch me if you can', bountyXp: 480 },
+      { id: '15783:60697', owner: 'u2', center: { latitude: 18.9402, longitude: 72.837 }, effortKm: 8.4, contested: false, zoneName: 'Flyover Wheel Line', mode: 'bike', lastCapturedAt: Date.now() - 1000 * 60 * 60 * 24 * 8, ghostName: 'Omar', ghostPaceLabel: '03:24', tag: 'Wheel war', bountyXp: 0 },
     ],
     races: [
       {

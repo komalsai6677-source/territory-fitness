@@ -92,6 +92,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [stepEligibleMeters, setStepEligibleMeters] = useState(0);
   const [elevationGainMeters, setElevationGainMeters] = useState(0);
   const [currentSpeedKmh, setCurrentSpeedKmh] = useState(0);
+  const [capturePaused, setCapturePaused] = useState(false);
+  const [antiCheatReason, setAntiCheatReason] = useState<string | undefined>(undefined);
   const [durationSeconds, setDurationSeconds] = useState(0);
   const [capturedTileIds, setCapturedTileIds] = useState<string[]>([]);
   const [territoryTiles, setTerritoryTiles] = useState<TerritoryTile[]>(seedTerritoryTiles);
@@ -168,8 +170,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       ),
       currentSpeedKmh,
       mode: activityMode,
+      capturePaused,
+      antiCheatReason,
     };
-  }, [activityMode, capturedTileIds.length, currentSpeedKmh, distanceMeters, durationSeconds, elevationGainMeters, stepEligibleMeters]);
+  }, [activityMode, antiCheatReason, capturePaused, capturedTileIds.length, currentSpeedKmh, distanceMeters, durationSeconds, elevationGainMeters, stepEligibleMeters]);
 
   const leaderboard = useMemo(() => {
     if (serverLeaderboard.length > 0) {
@@ -279,17 +283,23 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           setCurrentLocation(nextPoint);
           setRoutePoints((points) => [...points, nextPoint]);
 
+          let flaggedVehicle = false;
+
           if (lastPointRef.current) {
             const segmentDistance = getDistanceMeters(lastPointRef.current, nextPoint);
             const sampleAt = Date.now();
             const elapsedSeconds = Math.max(1, (sampleAt - (lastSampleAtRef.current ?? sampleAt - 1000)) / 1000);
             const speedKmh = (segmentDistance / elapsedSeconds) * 3.6;
+            const estimatedCadence = segmentDistance > 1 ? Math.round((segmentDistance / 0.78 / elapsedSeconds) * 60) : 0;
+            flaggedVehicle = activityMode !== 'bike' && speedKmh > 15 && estimatedCadence < 110;
 
             setCurrentSpeedKmh(Number(speedKmh.toFixed(1)));
+            setCapturePaused(flaggedVehicle);
+            setAntiCheatReason(flaggedVehicle ? 'Capture paused: speed suggests a vehicle, not a runner.' : undefined);
             if (segmentDistance > 1) {
               setDistanceMeters((value) => value + segmentDistance);
               setElevationGainMeters((value) => value + Math.max(0, Math.round(segmentDistance * 0.012)));
-              if (activityMode !== 'bike' && speedKmh <= STEP_SPEED_LIMITS[activityMode]) {
+              if (!flaggedVehicle && activityMode !== 'bike' && speedKmh <= STEP_SPEED_LIMITS[activityMode]) {
                 setStepEligibleMeters((value) => value + segmentDistance);
               }
             }
@@ -300,6 +310,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
           const tileId = getTileId(nextPoint.latitude, nextPoint.longitude);
           setCapturedTileIds((tileIds) => {
+            if (flaggedVehicle) {
+              return tileIds;
+            }
             if (tileIds.includes(tileId)) {
               return tileIds;
             }
@@ -340,6 +353,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setStepEligibleMeters(0);
     setElevationGainMeters(0);
     setCurrentSpeedKmh(0);
+    setCapturePaused(false);
+    setAntiCheatReason(undefined);
     setDurationSeconds(0);
     setCapturedTileIds([getTileId(initialPoint.latitude, initialPoint.longitude)]);
     setTerritoryTiles((existingTiles) => mergeTiles(existingTiles.length ? existingTiles : seedTerritoryTiles, [getTileId(initialPoint.latitude, initialPoint.longitude)], activityMode));
@@ -431,6 +446,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           contested: tile.contested,
           zoneName: tile.zoneName,
           mode: tile.mode,
+          decayLevel: tile.decayLevel,
+          bountyXp: tile.bountyXp,
+          supplyLine: tile.supplyLine,
+          tag: tile.tag,
+          ghostName: tile.ghostName,
+          ghostPaceLabel: tile.ghostPaceLabel,
         }))
       );
       setServerLeaderboard(bootstrap.leaderboard.map((entry) => ({ name: entry.name, tiles: entry.tiles, km: entry.km })));

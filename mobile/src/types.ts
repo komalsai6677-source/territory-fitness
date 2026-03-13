@@ -23,6 +23,12 @@ export type TerritoryTile = {
   contested?: boolean;
   zoneName?: string;
   mode?: TerritoryMode;
+  decayLevel?: number;
+  bountyXp?: number;
+  supplyLine?: boolean;
+  tag?: string;
+  ghostName?: string;
+  ghostPaceLabel?: string;
 };
 
 export type SessionMetrics = {
@@ -37,6 +43,8 @@ export type SessionMetrics = {
   relativeEffort: number;
   currentSpeedKmh: number;
   mode: TerritoryMode;
+  capturePaused: boolean;
+  antiCheatReason?: string;
 };
 
 export type SessionSummary = {

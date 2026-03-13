@@ -127,6 +127,12 @@ export async function fetchBootstrap(token: string) {
       contested?: boolean;
       zoneName?: string;
       mode?: 'walk' | 'run' | 'bike';
+      decayLevel?: number;
+      bountyXp?: number;
+      supplyLine?: boolean;
+      tag?: string;
+      ghostName?: string;
+      ghostPaceLabel?: string;
     }>;
   };
 }

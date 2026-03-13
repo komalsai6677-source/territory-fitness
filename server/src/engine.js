@@ -2,8 +2,12 @@ import { createToken, hashPassword, verifyPassword } from './auth.js';
 import { formatPace, getDistanceMeters, getTileCenterFromId, getTileId } from './geo.js';
 import { ensureStore, saveStore } from './store.js';
 
-const MAX_SPEED_METERS_PER_SECOND = 8.5;
 const MAX_ACCURACY_METERS = 40;
+const MAX_SPEED_METERS_PER_SECOND = {
+  walk: 2.8,
+  run: 8.5,
+  bike: 19,
+};
 
 export async function createEngine() {
   const database = await ensureStore();
@@ -124,7 +128,7 @@ export async function createEngine() {
         return { error: 'Session not found or inactive.', status: 404 };
       }
 
-      const validation = validateMovement(session.lastLocation, session.lastTimestamp, payload);
+      const validation = validateMovement(session.lastLocation, session.lastTimestamp, payload, session.mode);
       if (!validation.ok) {
         return { error: validation.reason, status: 400 };
       }
@@ -168,7 +172,7 @@ export async function createEngine() {
       const summary = summarizeSession(session);
       applyUserProgress(database.users, session.userId, {
         active: false,
-        distanceMeters: session.distanceMeters,
+        distanceMetersDelta: 0,
         capturedTiles: session.capturedTileIds.length,
         status: 'Finished a run',
         completedSession: summary,
@@ -242,7 +246,7 @@ export async function createEngine() {
   };
 }
 
-export function validateMovement(previousLocation, previousTimestamp, payload) {
+export function validateMovement(previousLocation, previousTimestamp, payload, mode = 'run') {
   if (typeof payload.accuracyMeters === 'number' && payload.accuracyMeters > MAX_ACCURACY_METERS) {
     return { ok: false, reason: 'Location accuracy is too low.' };
   }
@@ -260,7 +264,7 @@ export function validateMovement(previousLocation, previousTimestamp, payload) {
   const durationSeconds = Math.max(1, (payload.timestamp - previousTimestamp) / 1000);
   const speed = distanceMeters / durationSeconds;
 
-  if (speed > MAX_SPEED_METERS_PER_SECOND) {
+  if (speed > MAX_SPEED_METERS_PER_SECOND[mode]) {
     return { ok: false, reason: 'Movement rejected as unrealistic.' };
   }
 
@@ -296,6 +300,10 @@ function upsertTerritoryTile(territory, tileId, userId, effortKm, users, mode) {
       contested: false,
       zoneName: `Sector ${tileId.replace(':', '-')}`,
       mode,
+      lastCapturedAt: Date.now(),
+      ghostName: 'Ghost Leader',
+      ghostPaceLabel: mode === 'bike' ? '03:30' : '04:20',
+      bountyXp: 0,
     });
     return;
   }
@@ -304,6 +312,7 @@ function upsertTerritoryTile(territory, tileId, userId, effortKm, users, mode) {
     tile.owner = normalizedOwner;
     tile.effortKm = Number(Math.max(tile.effortKm ?? 0, nextEffort).toFixed(2));
     tile.contested = false;
+    tile.lastCapturedAt = Date.now();
     return;
   }
 
@@ -311,6 +320,8 @@ function upsertTerritoryTile(territory, tileId, userId, effortKm, users, mode) {
     tile.owner = normalizedOwner;
     tile.effortKm = nextEffort;
     tile.contested = false;
+    tile.lastCapturedAt = Date.now();
+    tile.bountyXp = 0;
     const owner = users.find((entry) => entry.id === userId);
     if (owner) {
       owner.points += 30;
@@ -501,8 +512,31 @@ function getChatMessagesForUser(database, user, groupId) {
 }
 
 function mapTerritoryForUser(territory, userId) {
-  return territory.map((tile) => ({
-    ...tile,
-    owner: tile.owner === userId || tile.owner === 'you' ? 'you' : tile.owner === 'open' ? 'open' : 'rival',
-  }));
+  const userTiles = territory
+    .filter((tile) => tile.owner === userId || tile.owner === 'you')
+    .sort((left, right) => left.center.longitude - right.center.longitude);
+
+  const supplyLineIds = new Set();
+  for (let index = 0; index < userTiles.length - 1; index += 1) {
+    const current = userTiles[index];
+    const next = userTiles[index + 1];
+    if (Math.abs(current.center.latitude - next.center.latitude) < 0.0004) {
+      supplyLineIds.add(current.id);
+      supplyLineIds.add(next.id);
+    }
+  }
+
+  return territory.map((tile) => {
+    const ageDays = tile.lastCapturedAt ? (Date.now() - tile.lastCapturedAt) / (1000 * 60 * 60 * 24) : 999;
+    const decayLevel = tile.owner === 'open' ? 1 : Math.max(0, Math.min(1, ageDays / 30));
+    const bountyXp = tile.owner !== 'open' && ageDays > 20 ? Math.round((ageDays - 20) * 16) : tile.bountyXp ?? 0;
+
+    return {
+      ...tile,
+      owner: tile.owner === userId || tile.owner === 'you' ? 'you' : tile.owner === 'open' ? 'open' : 'rival',
+      decayLevel: Number(decayLevel.toFixed(2)),
+      bountyXp,
+      supplyLine: supplyLineIds.has(tile.id),
+    };
+  });
 }

@@ -79,6 +79,9 @@ export function ActivityScreen() {
         </Text>
         <Text style={styles.sectionSubtle}>Current speed: {metrics.currentSpeedKmh.toFixed(1)} km/h</Text>
         <Text style={styles.sectionSubtle}>
+          {metrics.capturePaused ? metrics.antiCheatReason ?? 'Capture paused.' : 'Capture engine is active.'}
+        </Text>
+        <Text style={styles.sectionSubtle}>
           {activityMode === 'walk'
             ? 'Walk steps stop counting if speed gets too high.'
             : activityMode === 'bike'
