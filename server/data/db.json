@@ -3,7 +3,7 @@
     {
       "id": "u1",
       "email": "nina@example.com",
-      "passwordHash": "cd569a239032bb3acd814b58ae53af77:58d15ef8ee7957ff97234689302271e18dfe96d9603256da7b638f939fbe1e632493ac67ad4e9d5178745a1e947e51f3f29e33d32f055b68b70100f61f5e05ea",
+      "passwordHash": "4b739335afa3c2008fcbaeda951b2ef9:19312d45ab85a6f58285c1727bd4ec0a347425b5439c3f52f9b95418b1bd266578fb2a2592924244be60190991703707e644a51b78e98e93ae98c63e6782d221",
       "name": "Nina",
       "bio": "Defending harbour tiles",
       "status": "Defending harbour tiles",
@@ -34,7 +34,7 @@
     {
       "id": "you",
       "email": "you@example.com",
-      "passwordHash": "a23e66d3fc54cc8783f1fbd691137b17:e0d71aa1f7842bd88e6ba6ec9ec97618a11a367f3b4cd6c1b888dc655c7711ff668def5a41de38ac92e103469bf6cd97020ce20eae7525dc226c4214d7bcd7dc",
+      "passwordHash": "d43cf776a877c23c428aaff68db1fc81:225253a9e3dde91a3c6e75087dd70b63831e4fd1a721b273fa8805261a94f9e03103eb8f620cad45839d27b0ccbe2d4a2237645e61642c6e2735c36e340c9f71",
       "name": "You",
       "bio": "Looking for a new route",
       "status": "Finished a run",
@@ -60,21 +60,21 @@
       "stickers": [
         "100 Tile Capture"
       ],
-      "points": 2176,
+      "points": 2152,
       "lastSession": {
-        "id": "session-1773412431215",
+        "id": "session-1773416114663",
         "status": "finished",
-        "distanceKm": 0,
+        "distanceKm": 0.01,
         "durationSeconds": 7,
         "capturedTiles": 1,
-        "paceLabel": "--:--",
+        "paceLabel": "11:40",
         "routePoints": 2
       }
     },
     {
       "id": "u2",
       "email": "omar@example.com",
-      "passwordHash": "1b7af2ef5e8d6e9a857ff18786cb01e2:cf96df6d0c22e4921af66997f2caf41c14c3cec9da4d41a4d09ab2836224c272647b3ebd0b441915baf7d9060cd7eb7f74ba7b85773abec0f484e98daa096e48",
+      "passwordHash": "21094f7db4583914ef3bb2b011605be9:66d5a6583c65c5516dd32473744f09d4d6e7ba5816f505eb12d3130d3b43c7b98ad100af936dae34f3e94978f7b0547fe94812955bc44e6a6ae73b4481734550",
       "name": "Omar",
       "bio": "Easy recovery run",
       "status": "Easy recovery run",
@@ -103,7 +103,7 @@
     {
       "id": "u3",
       "email": "mia@example.com",
-      "passwordHash": "1b096afef70c509ab89a66ff70c84a92:120a847eb560d70a26feecd3baeb620c6dde1b6ee9db45f91acf4ad86e193864950e2ea349f95ddc26088fd7aef316defdd1a562478ffe33091a667cd656d4ce",
+      "passwordHash": "f633142f1fd2e7e54f4fe37990af640c:a4a5c56f9eebe4ef81e025d2445fbd34ebad75a6af35aded29b77f785951a22e35597145d3713323de47701413035606c464fac162086137a5525b5dba83d878",
       "name": "Mia",
       "bio": "Capturing east blocks",
       "status": "Capturing east blocks",
@@ -130,9 +130,9 @@
       "lastSession": null
     },
     {
-      "id": "u1773412381126",
+      "id": "u1773416114558",
       "email": "runner@example.com",
-      "passwordHash": "f94989afe93c948994aa4af78da776fc:fb22b2e72e3ca9c0a6cf7c801daa3dd336fb7f7616cf97c040b6f4a98482ec72383db405f34739c2aa325a24e2064071e0c7ccf0fa1af485ebaf05814cd1f339",
+      "passwordHash": "538dfadb79e319c6f7e4871f44a15b98:65b153fe23cc3a178368963bd876675dadc089105a6a3459c53b8f85e6e39fd33b8599e8e6970b82d6897ad689a1f2b8c6c984ce6bebf87f869d3497850241dc",
       "name": "Runner",
       "bio": "New territory runner",
       "status": "Joined the league",
@@ -258,24 +258,14 @@
       "message": "started a sunset capture run"
     },
     {
-      "id": "feed-1773412381302",
+      "id": "feed-1773416114680",
       "actor": "You",
       "message": "finished a 0.01 km session and captured 1 tiles"
     },
     {
-      "id": "feed-1773412381371",
+      "id": "feed-1773416114722",
       "actor": "You",
       "message": "posted in City Crushers: Ready for tonight?"
-    },
-    {
-      "id": "feed-1773412404712",
-      "actor": "You",
-      "message": "finished a 0 km session and captured 1 tiles"
-    },
-    {
-      "id": "feed-1773412431295",
-      "actor": "You",
-      "message": "finished a 0 km session and captured 1 tiles"
     }
   ],
   "chatMessages": [
@@ -285,7 +275,7 @@
       "authorId": "u1",
       "authorName": "Nina",
       "text": "Harbour push at 6 PM?",
-      "createdAt": "2026-03-13T14:33:00.827Z"
+      "createdAt": "2026-03-13T15:35:14.344Z"
     },
     {
       "id": "m2",
@@ -293,23 +283,23 @@
       "authorId": "u3",
       "authorName": "Mia",
       "text": "Weekend route looks open on the east side.",
-      "createdAt": "2026-03-13T14:33:00.829Z"
+      "createdAt": "2026-03-13T15:35:14.345Z"
     },
     {
-      "id": "m-1773412381371",
+      "id": "m-1773416114722",
       "groupId": "g1",
       "authorId": "you",
       "authorName": "You",
       "text": "Ready for tonight?",
-      "createdAt": "2026-03-13T14:33:01.371Z"
+      "createdAt": "2026-03-13T15:35:14.722Z"
     }
   ],
   "sessions": [
     {
-      "id": "session-1773412381282",
+      "id": "session-1773416114663",
       "userId": "you",
-      "startedAt": 1773412381282,
-      "lastTimestamp": 1773412388286,
+      "startedAt": 1773416114663,
+      "lastTimestamp": 1773416121666,
       "lastLocation": {
         "latitude": 18.93825,
         "longitude": 72.83555
@@ -328,52 +318,6 @@
         "15781:60696"
       ],
       "distanceMeters": 7.6528211895862235,
-      "status": "finished"
-    },
-    {
-      "id": "session-1773412404285",
-      "userId": "you",
-      "startedAt": 1773412404285,
-      "lastTimestamp": 1773412404285,
-      "lastLocation": {
-        "latitude": 18.9382,
-        "longitude": 72.8355
-      },
-      "route": [
-        {
-          "latitude": 18.9382,
-          "longitude": 72.8355
-        }
-      ],
-      "capturedTileIds": [
-        "15781:60696"
-      ],
-      "distanceMeters": 0,
-      "status": "finished"
-    },
-    {
-      "id": "session-1773412431215",
-      "userId": "you",
-      "startedAt": 1773412431215,
-      "lastTimestamp": 1773412438221,
-      "lastLocation": {
-        "latitude": 18.93821,
-        "longitude": 72.83551
-      },
-      "route": [
-        {
-          "latitude": 18.9382,
-          "longitude": 72.8355
-        },
-        {
-          "latitude": 18.93821,
-          "longitude": 72.83551
-        }
-      ],
-      "capturedTileIds": [
-        "15781:60696"
-      ],
-      "distanceMeters": 1.5305643249160668,
       "status": "finished"
     }
   ]

@@ -39,6 +39,11 @@ npm.cmd start
 
 The API will start on `http://localhost:8787`.
 
+Production Render backend:
+
+- `https://territory-fitness-api-2.onrender.com`
+- When `DATABASE_URL` is set, the backend now stores app state in PostgreSQL instead of the local JSON file
+
 Demo account for backend bootstrap:
 
 - email: `you@example.com`

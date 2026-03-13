@@ -2,11 +2,74 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import pg from 'pg';
+
+const { Pool } = pg;
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const DB_PATH = path.join(DATA_DIR, 'db.json');
 
+let pool;
+
 export async function ensureStore() {
+  if (process.env.DATABASE_URL) {
+    return ensureDatabaseBackedStore();
+  }
+
+  return ensureFileBackedStore();
+}
+
+export async function saveStore(database) {
+  if (process.env.DATABASE_URL) {
+    return saveDatabaseStore(database);
+  }
+
+  await mkdir(DATA_DIR, { recursive: true });
+  await writeFile(DB_PATH, JSON.stringify(database, null, 2), 'utf8');
+}
+
+async function ensureDatabaseBackedStore() {
+  pool ??= new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.DATABASE_URL.includes('supabase.co') ? { rejectUnauthorized: false } : undefined,
+  });
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS app_state (
+      key TEXT PRIMARY KEY,
+      value JSONB NOT NULL
+    )
+  `);
+
+  const existing = await pool.query('SELECT value FROM app_state WHERE key = $1', ['territory-fitness']);
+  if (existing.rows.length > 0) {
+    return existing.rows[0].value;
+  }
+
+  const seed = await ensureFileBackedStore();
+  await saveDatabaseStore(seed);
+  return seed;
+}
+
+async function saveDatabaseStore(database) {
+  pool ??= new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.DATABASE_URL.includes('supabase.co') ? { rejectUnauthorized: false } : undefined,
+  });
+
+  await pool.query(
+    `
+      INSERT INTO app_state (key, value)
+      VALUES ($1, $2::jsonb)
+      ON CONFLICT (key)
+      DO UPDATE SET value = EXCLUDED.value
+    `,
+    ['territory-fitness', JSON.stringify(database)]
+  );
+}
+
+async function ensureFileBackedStore() {
   await mkdir(DATA_DIR, { recursive: true });
 
   try {
@@ -14,14 +77,9 @@ export async function ensureStore() {
     return JSON.parse(rawValue);
   } catch {
     const seed = createSeedDatabase();
-    await saveStore(seed);
+    await writeFile(DB_PATH, JSON.stringify(seed, null, 2), 'utf8');
     return seed;
   }
-}
-
-export async function saveStore(database) {
-  await mkdir(DATA_DIR, { recursive: true });
-  await writeFile(DB_PATH, JSON.stringify(database, null, 2), 'utf8');
 }
 
 function createSeedDatabase() {

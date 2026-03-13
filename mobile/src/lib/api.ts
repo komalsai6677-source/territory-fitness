@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://territory-fitness-api.onrender.com';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://territory-fitness-api-2.onrender.com';
 
 type Coordinates = {
   latitude: number;
